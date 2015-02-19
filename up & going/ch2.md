@@ -464,7 +464,7 @@ else {
 }
 ```
 
-This structure works, but it's a little verbose because you're having to specify the `a` test for each case. Here's another option, the `switch` statement:
+This structure works, but it's a little verbose because you need to specify the `a` test for each case. Here's another option, the `switch` statement:
 
 ```js
 switch (a) {
@@ -527,7 +527,7 @@ The conditional operator doesn't have to be used in an assignment, but that's de
 
 ES5 added a "strict mode" to the language, which tightens the rules for certain behaviors. Generally, these restrictions are seen as keeping the code to a safer and more appropriate set of guidelines. Also, adhering to strict mode makes your code generally more optimizable by the engine. Strict mode is a big win for code, and you should use it for all your programs.
 
-You can opt-in to strict mode for an individual function, or an entire file, depending on where you put the strict mode pragma:
+You can opt in to strict mode for an individual function, or an entire file, depending on where you put the strict mode pragma:
 
 ```js
 function foo() {
@@ -570,7 +570,7 @@ function foo() {
 foo();
 ```
 
-If you turn on strict mode in your code, and you get errors, or code starts behaving buggy, your temptation may be to avoid strict mode. But that instinct would be a bad idea to indulge. If strict mode causes issues in your program, almost certainly it's a sign that you have things in your program you should fix.
+If you turn on strict mode in your code, and you get errors, or code starts behaving buggy, your temptation might be to avoid strict mode. But that instinct would be a bad idea to indulge. If strict mode causes issues in your program, almost certainly it's a sign that you have things in your program you should fix.
 
 Not only will strict mode keep your code to a safer path, and not only will it make your code more optimizable, but it also represents the future direction of the language. It'd be easier on you to get used to strict mode now than to keep putting it off -- it'll only get harder to convert later!
 
@@ -578,7 +578,7 @@ Not only will strict mode keep your code to a safer path, and not only will it m
 
 ## Functions As Values
 
-So far we've discussed functions as the primary mechanism of *scope* in JavaScript. You recall typical `function` declaration syntax like:
+So far, we've discussed functions as the primary mechanism of *scope* in JavaScript. You recall typical `function` declaration syntax as follows:
 
 ```js
 function foo() {
@@ -610,7 +610,7 @@ The second function expression is *named* (`bar`), even as a reference to it is 
 
 For more information, see the *Scope & Closures* title of this series.
 
-### Immediately Invoked Function Expressions (IIFE)
+### Immediately Invoked Function Expressions (IIFEs)
 
 In the previous snippet, neither of the function expressions are executed -- we could if we had included `foo()` or `x()`, for instance.
 
@@ -656,7 +656,7 @@ var a = 42;
 console.log( a );		// 42
 ```
 
-IIFE's can also have return values:
+IIFEs can also have return values:
 
 ```js
 var x = (function IIFE(){
@@ -672,7 +672,7 @@ The `42` value gets `return`ed from the `IIFE`-named function being executed, an
 
 *Closure* is one of the most important, and often least understood, concepts in JavaScript. I won't cover it in deep detail here, and instead refer you to the *Scope & Closures* title in this series. But we want to say a few things about it so you understand the general concept. It will be one of the most important techniques in your JS skillset.
 
-You can think of *closure* as a way to "remember" and continue to access a function's scope (its variables) even once the function has finished running.
+You can think of closure as a way to "remember" and continue to access a function's scope (its variables) even once the function has finished running.
 
 Consider:
 
@@ -714,13 +714,13 @@ More on how this code works:
 3. When we call `plusOne(3)`, it adds `3` (its inner `y`) to the `1` (remembered by `x`), and we get `4` as the result.
 4. When we call `plusTen(13)`, it adds `13` (its inner `y`) to the `10` (remembered by `x`), and we get `23` as the result.
 
-Don't worry if this seems strange and confusing at first -- it can be! It'll take lots of practice to get it fully.
+Don't worry if this seems strange and confusing at first -- it can be! It'll take lots of practice to understand it fully.
 
-But trust me, once you do, it's one of the most powerful and useful techniques in all of programming. It's definitely worth the effort to let your brain simmer on closures for a bit. In the next section, we'll get a little more practice with *closure*.
+But trust me, once you do, it's one of the most powerful and useful techniques in all of programming. It's definitely worth the effort to let your brain simmer on closures for a bit. In the next section, we'll get a little more practice with closure.
 
 #### Modules
 
-The most common usage of *closure* in JavaScript is the module pattern. Modules let you define private implementation details (variables, functions) that are hidden from the outside world, as well as a public API that *is* accessible from the outside.
+The most common usage of closure in JavaScript is the module pattern. Modules let you define private implementation details (variables, functions) that are hidden from the outside world, as well as a public API that *is* accessible from the outside.
 
 Consider:
 
@@ -748,19 +748,19 @@ var fred = User();
 fred.login( "fred", "12Battery34!" );
 ```
 
-The `User()` function serves as an outer *scope* that holds the variables `username` and `password`, as well as the inner `doLogin()` function; these are all private inner details of this `User` module that cannot be accessed from the outside world.
+The `User()` function serves as an outer scope that holds the variables `username` and `password`, as well as the inner `doLogin()` function; these are all private inner details of this `User` module that cannot be accessed from the outside world.
 
-Executing `User()` creates an *instance* of the `User` module -- a whole new scope is created, and thus a whole new copy of each of these inner variables/functions. We assign this *instance* to `fred`. If we run `User()` again, we'd get a new *instance* entirely separate from `fred`.
+Executing `User()` creates an instance of the `User` module -- a whole new scope is created, and thus a whole new copy of each of these inner variables/functions. We assign this instance to `fred`. If we run `User()` again, we'd get a new instance entirely separate from `fred`.
 
-The inner `doLogin()` function has a *closure* over `username` and `password`, meaning it will retain its access to them even after the `User()` function finishes running.
+The inner `doLogin()` function has a closure over `username` and `password`, meaning it will retain its access to them even after the `User()` function finishes running.
 
-`publicAPI` is an object with one property/method on it, `login`, which is a reference to the inner `doLogin()` function. When we return `publicAPI` from `User()`, it becomes the *instance* we call `fred`.
+`publicAPI` is an object with one property/method on it, `login`, which is a reference to the inner `doLogin()` function. When we return `publicAPI` from `User()`, it becomes the instance we call `fred`.
 
-At this point, the outer `User()` function has finished executing. Normally, you'd think the inner variables like `username` and `password` have gone away. But here they have not, because there's a *closure* in the `login()` function keeping them alive.
+At this point, the outer `User()` function has finished executing. Normally, you'd think the inner variables like `username` and `password` have gone away. But here they have not, because there's a closure in the `login()` function keeping them alive.
 
 That's why we can call `fred.login(..)` -- the same as calling the inner `doLogin(..)` -- and it can still access `username` and `password` inner variables.
 
-There's a good chance that with just this brief glimpse at *closure* and the module pattern, some of it is still a bit confusing. That's OK! It takes some work to wrap your brain around it.
+There's a good chance that with just this brief glimpse at closure and the module pattern, some of it is still a bit confusing. That's OK! It takes some work to wrap your brain around it.
 
 From here, go read the *Scope & Closures* title of this series for a much more in-depth exploration.
 
@@ -768,7 +768,7 @@ From here, go read the *Scope & Closures* title of this series for a much more i
 
 Another very commonly misunderstood concept in JavaScript is the `this` keyword. Again, there's a whole set of book chapters on it in the *this & Object Prototypes* title of this series, so here we'll just briefly introduce the concept.
 
-While it may often seem that `this` is related to "object oriented" patterns, in JS `this` is a different mechanism.
+While it may often seem that `this` is related to "object-oriented patterns," in JS `this` is a different mechanism.
 
 If a function has a `this` keyword reference inside it, that `this` keyword usually points to an `object`. But which `object` it points to depends on how the function was called.
 
@@ -809,11 +809,11 @@ There are four rules for how `this` gets set, and they're shown in those last fo
 
 Bottom line: to understand what `this` points to, you have to examine how the function in question was called. It will be one of those four ways just shown, and that will then answer what `this` is.
 
-**Note:** For more information about `this`, see the first two chapters of the *this & Object Prototypes* title of this series.
+**Note:** For more information about `this`, see Chapters 1 and 2 of the *this & Object Prototypes* title of this series.
 
 ## Prototypes
 
-The prototype mechanism in JavaScript is quite complicated. We will only glance at it here. You will want to spend plenty of time on the last three chapters of the *this & Object Prototypes* title of this series to get all the details down.
+The prototype mechanism in JavaScript is quite complicated. We will only glance at it here. You will want to spend plenty of time reviewing Chapters 1-3 of the *this & Object Prototypes* title of this series to get all the details down.
 
 When you reference a property on an object, if that property doesn't exist, JavaScript will automatically use that object's internal prototype reference to find another object to look for the property on. You could think of this almost as a fallback if the property is missing.
 
@@ -855,11 +855,11 @@ So, what do you do with the new stuff? Do you just have to wait around for years
 
 That's how many people think about the situation, but it's really not a healthy approach to JS.
 
-There's two main techniques you can use to "bring" the newer JavaScript stuff to the older browsers: polyfilling and transpiling.
+There are two main techniques you can use to "bring" the newer JavaScript stuff to the older browsers: polyfilling and transpiling.
 
 ### Polyfilling
 
-The word "polyfill" is an invented term (by Remy Sharp) (https://remysharp.com/2010/10/08/what-is-a-polyfill) used to refer to taking the definition of a newer feature and producing a piece of code that's equivalent to the behavior, but which can run in older JS environments.
+The word "polyfill" is an invented term (by Remy Sharp) (https://remysharp.com/2010/10/08/what-is-a-polyfill) used to refer to taking the definition of a newer feature and producing a piece of code that's equivalent to the behavior, but is able to run in older JS environments.
 
 For example, ES6 defines a utility called `Number.isNaN(..)` to provide an accurate non-buggy check for `NaN` values, replacing the original `isNaN(..)` utility. But it's easy to polyfill that utility so that you can start using it in your code regardless of whether the end user is in an ES6 browser or not.
 
@@ -877,7 +877,7 @@ First, the `if` statement guards against applying the polyfill definition in ES6
 
 **Note:** The check we do here takes advantage of a quirk with `NaN` values, which is that they're the only value in the whole language that is not equal to itself. So the `NaN` value is the only one that would make `x !== x` be `true`.
 
-Not all new features are fully polyfillable. Sometimes most of the behavior can be polyfilled, but there are still small deviations. You should be really, really careful in implementing a polyfill yourself, to make sure you are as strictly adhering to the specification as possible.
+Not all new features are fully polyfillable. Sometimes most of the behavior can be polyfilled, but there are still small deviations. You should be really, really careful in implementing a polyfill yourself, to make sure you are adhering to the specification as strictly as possible.
 
 Or better yet, use an already vetted set of polyfills that you can trust, such as those provided by ES5-Shim (https://github.com/es-shims/es5-shim) and ES6-Shim (https://github.com/es-shims/es6-shim).
 
@@ -891,11 +891,13 @@ Essentially, your source code is authored in the new sytnax form, but what you d
 
 You might wonder why you'd go to the trouble to write new syntax only to have it transpiled away to older code -- why not just write the older code directly?
 
-There's several important reasons you should care about transpiling:
+There are several important reasons you should care about transpiling:
 
 1. The new syntax added to the language is designed to make your code more readable and maintainable. The older equivalents are often much more convoluted. You should prefer writing newer and cleaner syntax, not only for yourself but for all other members of the development team.
 2. If you transpile only for older browsers, but serve the new syntax to the newest browsers, you get to take advantage of browser performance optimizations with the new sytnax. This also lets browser makers have more real-world code to test their implementations and optimizations on.
 3. Using the new syntax earlier allows it to be tested more robustly in the real world, which provides earlier feedback to the JavaScript committee (TC39). If issues are found early enough, they can be changed/fixed before those language design mistakes become permanent.
+
+//TODO Kyle: OK to make this a bulleted list instead?
 
 Here's a quick example of transpiling. ES6 adds a feature called "default parameter values." It looks like this:
 
@@ -917,7 +919,7 @@ function foo() {
 }
 ```
 
-As you can see, it checks to see if the `arguments[0]` value is `void 0` (aka `undefined`), and if so provides the `2` default value, otherwise it assigns whatever was passed.
+As you can see, it checks to see if the `arguments[0]` value is `void 0` (aka `undefined`), and if so provides the `2` default value; otherwise, it assigns whatever was passed.
 
 In addition to being able to now use the nicer syntax even in older browsers, looking at the transpiled code actually explains the intended behavior more clearly.
 
@@ -929,8 +931,8 @@ If you use a transpiler by default, you'll always be able to make that switch to
 
 There are quite a few great transpilers for you to choose from. Here are some good options at the time of this writing:
 
-* 6to5 (https://github.com/6to5/6to5): transpiles ES6 into ES5
-* Traceur (https://github.com/google/traceur-compiler): transpiles ES6, ES7, .. into ES5.
+* 6to5 (https://github.com/6to5/6to5): Transpiles ES6 into ES5
+* Traceur (https://github.com/google/traceur-compiler): Transpiles ES6, ES7, ... into ES5.
 
 ## Non-JavaScript
 
@@ -946,13 +948,13 @@ The `document` variable exists as a global variable when your code is running in
 
 Moreover, the `getElementByID(..)` method on `document` looks like a normal JS function, but it's just a thinly exposed interface to a built-in method provided by the DOM from your browser. In some (newer-generation) browsers, this layer may also be in JS, but traditionally the DOM and its behavior is implemented in something more like C/C++.
 
-Another example is with I/O (input/output).
+Another example is with input/output (I/O).
 
 Everyone's favorite `alert(..)` pops up a message box in the user's browser window. `alert(..)` is provided to your JS program by the browser, not by the JS engine itself. The call you make sends the message to the browser internals and it handles drawing and displaying the message box.
 
 The same goes with `console.log(..)`; your browser provides such mechanisms and hooks them up to the developer tools.
 
-This book, and this whole series, focuses on JavaScript the language. That's why you don't see any substantial coverage of these non-JavaScript JavaScript mechanisms. Nevertheless, you need to be aware of them as they'll be in every JS program you write!
+This book, and this whole series, focuses on JavaScript the language. That's why you don't see any substantial coverage of these non-JavaScript JavaScript mechanisms. Nevertheless, you need to be aware of them, as they'll be in every JS program you write!
 
 ## Review
 
@@ -960,4 +962,4 @@ The first step to learning JavaScript's flavor of programming is to get a basic 
 
 Of course, each of these topics deserves much greater coverage than you've seen here, but that's why they have chapters and books dedicated to them throughout the rest of this series. After you feel pretty comfortable with the concepts and code samples in this chapter, the rest of the series awaits you to really dig in and get to know the language.
 
-The final chapter of this book will briefly overview each of the other titles in the series and the other concepts they cover besides what we've already explored.
+The final chapter of this book will briefly summarize each of the other titles in the series and the other concepts they cover besides what we've already explored.
