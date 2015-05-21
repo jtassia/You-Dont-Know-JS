@@ -5,11 +5,11 @@ Before reading this book, I assume you have a solid working proficiency over Jav
 
 If you are still looking for confidence with JavaScript, I highly recommend you read the other titles in this series first:
 
-* *"Up & Going"*: Are you new to programming and JS? This is the roadmap you need to consult as you start your learning journey.
-* *"Scope & Closures"*: Did you know that JS lexical scope is based on compiler (not interpreter!) semantics? Can you explain how closures are a direct result of lexical scope and functions as values?
-* *"this & Object Prototypes"*: Can you recite the four simple rules for how `this` is bound? Have you been muddling through fake "classes" in JS instead of adopting the simpler "behavior delegation" design pattern? Ever heard of OLOO?
-* *"Types & Grammar"*: Do you know the built-in types in JS, and more importantly do you know how to properly and safely use coercion between types? How comfortable are you with the nuances of JS grammar/syntax?
-* *"Async & Performance"*: Are you still using callbacks to manage your asynchrony? Can you explain what a promise is and why/how it solves "callback hell", and how generators improve the legibility of async code? What exactly constitutes mature optimization of JS programs and individual operations?
+* *Up & Going*: Are you new to programming and JS? This is the roadmap you need to consult as you start your learning journey.
+* *Scope & Closures*: Did you know that JS lexical scope is based on compiler (not interpreter!) semantics? Can you explain how closures are a direct result of lexical scope and functions as values?
+* *this & Object Prototypes*: Can you recite the four simple rules for how `this` is bound? Have you been muddling through fake "classes" in JS instead of adopting the simpler "behavior delegation" design pattern? Ever heard of OLOO?
+* *Types & Grammar*: Do you know the built-in types in JS, and more importantly do you know how to properly and safely use coercion between types? How comfortable are you with the nuances of JS grammar/syntax?
+* *Async & Performance*: Are you still using callbacks to manage your asynchrony? Can you explain what a promise is and why/how it solves "callback hell", and how generators improve the legibility of async code? What exactly constitutes mature optimization of JS programs and individual operations?
 
 If you've read all those titles and you feel pretty comfortable with those topics, it's time we dive into the evolution of JS to explore all the changes coming not only soon but farther over the horizon.
 
