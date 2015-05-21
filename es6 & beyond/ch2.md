@@ -133,7 +133,7 @@ Your blocks don't have to share their original behavior with scoping behavior.
 
 This explicitness on your part, which is up to you to maintain with discipline, will save you lots of refactor headaches and footguns down the line.
 
-**Note:** For more information on `let` and block scoping, see Chapter 3 of the *"Scope & Closures"* title of this series.
+**Note:** For more information on `let` and block scoping, see Chapter 3 of the *Scope & Closures* title of this series.
 
 #### `let` + `for`
 
