@@ -1,19 +1,21 @@
 # You Don't Know JS: ES6 & Beyond
 # Chapter 3: Organization
 
-Some of the most important changes in ES6 involve improved support for the patterns we already commonly use to organize JavaScript functionality. This chapter will explore Iterators, Generators, Modules, and Classes.
+Some of the most important changes in ES6 involve improved support for the patterns we already commonly use to organize JavaScript functionality. This chapter will explore iterators, generators, modules, and classes.
 
 ## Iterators
 
 An *iterator* is a structured pattern for pulling information from a source in one-at-a-time fashion. This pattern has been around programming for a long time. And to be sure, JS developers have been ad hoc designing and implementing iterators in JS programs since before anyone can remember, so it's not at all a new topic.
 
-What ES6 has done is introduce an implicit standardized interface for iterators. Many of the built in data structures in JavaScript will now expose an iterator implementing this standard. And you can also construct your own iterators adhering to the same standard, for maximal interoperability.
+What ES6 has done is introduce an implicit standardized interface for iterators. Many of the built-in data structures in JavaScript will now expose an iterator implementing this standard. And you can also construct your own iterators adhering to the same standard, for maximal interoperability.
 
 Iterators are a way of organizing ordered, sequential, pull-based consumption of data.
 
 For example, you may implement a utility that produces a new unique identifier each time it's requested. Or you may produce an infinite series of values that rotate through a fixed list, in round-robin fashion. Or you could attach an iterator to a database query result to pull out new rows one at a time.
 
 Though not as common a usage of iterators to this point in JS, iterators can also be thought of as controlling behavior one step at a time. This can be illustrated quite clearly when considering generators (see "Generators" later in this chapter), though you can certainly do the same without generators.
+
+//TODO Kyle: "Although they have not commonly been used in JS in such a manner, iterators..."? 
 
 ### Interfaces
 
@@ -24,7 +26,7 @@ Iterator [required]
 	next() {method}: retrieves next IteratorResult
 ```
 
-There are two optional members which some iterators are extended with:
+There are two optional members that some iterators are extended with:
 
 ```
 Iterator [optional]
@@ -41,7 +43,7 @@ IteratorResult
 	done {property}: boolean, indicates completion status
 ```
 
-**Note:** I call these interfaces implicit not because they're not explicitly called out in the specification -- they are! -- but because they're not exposed as direct objects accessible to code. JavaScript does not, in ES6, support any notion of "interfaces", so adherence for your own code is purely conventional. However, wherever JS expects an iterator -- a `for..of` loop, for instance -- what you provide must adhere to these interfaces or the code will fail.
+**Note:** I call these interfaces implicit not because they're not explicitly called out in the specification -- they are! -- but because they're not exposed as direct objects accessible to code. JavaScript does not, in ES6, support any notion of "interfaces," so adherence for your own code is purely conventional. However, wherever JS expects an iterator -- a `for..of` loop, for instance -- what you provide must adhere to these interfaces or the code will fail.
 
 There's also an `Iterable` interface, which describes objects that must be able to produce iterators:
 
@@ -50,7 +52,7 @@ Iterable
 	@@iterator() {method}: produces an Iterator
 ```
 
-If you recall from "Built-in Symbols" in Chapter 2, `@@iterator` is the special built-in symbol representing the method that can produce iterator(s) for the object.
+If you recall from "Built-In Symbols" in Chapter 2, `@@iterator` is the special built-in symbol representing the method that can produce iterator(s) for the object.
 
 #### IteratorResult
 
@@ -62,9 +64,11 @@ The `IteratorResult` interface specifies that the return value from any iterator
 
 Built-in iterators will always return values of this form, but it is of course allowed that more properties be present on the return value, as necessary.
 
-For example, a custom iterator may add additional metadata to the result object, like where the data came from, how long it took to retrieve, cache expiration length, frequency for the appropriate next request, etc.
+//TODO Kyle: "but more properties are, of course, allowed to be present on the return value, as necessary."?
 
-**Note:** Technically, `value` is optional if it would otherwise be considered absent or unset, such as in the case of the value of `undefined`. Since accessing `res.value` will produce `undefined` whether it's present with that value or absent entirely, the presence/absence of the property is more an implementation detail and/or an optimization, rather than a functional issue.
+For example, a custom iterator may add additional metadata to the result object (e.g., where the data came from, how long it took to retrieve, cache expiration length, frequency for the appropriate next request, etc.).
+
+**Note:** Technically, `value` is optional if it would otherwise be considered absent or unset, such as in the case of the value of `undefined`. Because accessing `res.value` will produce `undefined` whether it's present with that value or absent entirely, the presence/absence of the property is more an implementation detail or an optimization (or both), rather than a functional issue.
 
 ### `next()` Iteration
 
@@ -82,9 +86,11 @@ it.next();		// { value: 3, done: false }
 it.next();		// { value: undefined, done: true }
 ```
 
-Each time the method located at `Symbol.iterator` (see Chapter 2 and 7) is invoked on this `arr` value, it will produce a new fresh iterator. Most structures will do the same, including all the built-in data structures in JS.
+Each time the method located at `Symbol.iterator` (see Chapters 2 and 7) is invoked on this `arr` value, it will produce a new fresh iterator. Most structures will do the same, including all the built-in data structures in JS.
 
-However, it *is* possible to conceive of a structure which could only produce a single iterator (singleton pattern), or perhaps only allow one unique iterator at a time, requiring the current one to be
+However, it *is* possible to conceive of a structure that could only produce a single iterator (singleton pattern), or perhaps only allow one unique iterator at a time, requiring the current one to be
+
+//TODO Kyle: "requiring the current one to be..."?  Will you please complete this sentence?
 
 You'll notice that the `it` iterator in the previous snippet doesn't report `done: true` when you received the `3` value. You have to call `next()` again, in essence going beyond the end of the array's values, to get the completed signal `done: true`. It may not be clear why until later in this section, but that design decision will typically be considered a best practice.
 
@@ -100,7 +106,7 @@ it.next();		// { value: "e", done: false }
 ..
 ```
 
-ES6 also includes several new data structures, called Collections (see Chapter 5). These collections are not only iterables themselves, but they also provide API method(s) to generate an iterator, such as:
+ES6 also includes several new data structures, called collections (see Chapter 5). These collections are not only iterables themselves, but they also provide API method(s) to generate an iterator, such as:
 
 ```js
 var m = new Map();
@@ -123,9 +129,9 @@ By general convention, including all the built-in iterators, calling `next(..)` 
 
 The optional methods on the iterator interface -- `return(..)` and `throw(..)` -- are not implemented on most of the built-in iterators. However, they definitely do mean something in the context of generators, so see "Generators" for more specific information.
 
-`return(..)` is defined as sending a signal to an iterator that the consuming code is complete and will not be pulling any more values from it. This signal can be used to notify the producer (the iterator responding to `next(..)` calls) to perform any cleanup it may need to do, such as releasing/closing network, database, or file handle resources, etc.
+`return(..)` is defined as sending a signal to an iterator that the consuming code is complete and will not be pulling any more values from it. This signal can be used to notify the producer (the iterator responding to `next(..)` calls) to perform any cleanup it may need to do, such as releasing/closing network, database, or file handle resources.
 
-If an iterator has a `return(..)` present and any condition occurs which can automatically be interpreted as abnormal or early termination of consuming the iterator, `return(..)` will automatically be called. You can call `return(..)` manually as well.
+If an iterator has a `return(..)` present and any condition occurs that can automatically be interpreted as abnormal or early termination of consuming the iterator, `return(..)` will automatically be called. You can call `return(..)` manually as well.
 
 `return(..)` will return an `IteratorResult` object just like `next(..)` does. In general, the optional value you send to `return(..)` would be sent back as `value` in this `IteratorResult`, though there are nuanced cases where that might not be true.
 
@@ -176,7 +182,9 @@ Recall earlier that we suggested iterators should in general not return `done: t
 
 If an iterator returned `{ done: true, value: 42 }`, the `for..of` loop would completely discard the `42` value and it'd be unavailable. For this reason -- to assume that your iterator may be consumed by such patterns as the `for..of` loop or its manual equivalent -- you should probably wait to return `done: true` for signaling completion until after you've already returned all relevant iteration values.
 
-**Warning:** You can of course intentionally design your iterator to return some relevant `value` at the same time as returning `done: true`. Don't do this unless you've documented that as the case, and thus implicitly forced consumers of your iterator to use a different pattern for iteration than is implied by `for..of` or its manual equivalent we depicted.
+//TODO Kyle: "For this reason, assuming your iterator may be consumed by such patterns as the `for..of` loop or its manual equivalent, you ..."?
+
+**Warning:** You can, of course, intentionally design your iterator to return some relevant `value` at the same time as returning `done: true`. Don't do this unless you've documented that as the case, and thus implicitly forced consumers of your iterator to use a different pattern for iteration than is implied by `for..of` or its manual equivalent we depicted.
 
 ### Custom Iterators
 
@@ -223,7 +231,7 @@ for (var v of Fib) {
 
 The `Fib[Symbol.iterator]()` method when called returns the iterator object with `next()` and `return(..)` methods on it. State is maintained via `n1` and `n2` variables, which are kept by the closure.
 
-Let's *next* consider an iterator which is designed to run through a series (aka a queue) of actions, one item at a time:
+Let's *next* consider an iterator that is designed to run through a series (aka a queue) of actions, one item at a time:
 
 ```js
 var tasks = {
@@ -290,7 +298,7 @@ it.next();				// { done: true }
 
 This particular usage reinforces that iterators can be a pattern for organizing functionality, not just data. It's also reminiscent of what we'll see with generators in the next section.
 
-You could even get creative and define an iterator that represents meta operations on a single piece of data. For example, we could define an iterator for numbers which by default ranges from `0` up to (or down to, for negative numbers) the number in question.
+You could even get creative and define an iterator that represents meta operations on a single piece of data. For example, we could define an iterator for numbers that by default ranges from `0` up to (or down to, for negative numbers) the number in question.
 
 Consider:
 
@@ -355,17 +363,17 @@ for (var i of 3) {
 [...-3];				// [0,-1,-2,-3]
 ```
 
-Those are some fun tricks, though the practical utility is somewhat debatable. But then again, one might wonder why ES6 didn't just ship with such a minor but delightful feature easter egg!?
+Those are some fun tricks, though the practical utility is somewhat debatable. But then again, one might wonder why ES6 didn't just ship with such a minor but delightful feature Easter egg!?
 
 I'd be remiss if I didn't at least remind you that extending native prototypes as I'm doing in the previous snippet is something you should only do with caution and awareness of potential hazards.
 
-In this case, the chances that you'll have a collision with other code or even a future JS feature is probably exceedingly low. But just beware of the slight possibility. And document what you're doing verbosely for posterity sake.
+In this case, the chances that you'll have a collision with other code or even a future JS feature is probably exceedingly low. But just beware of the slight possibility. And document what you're doing verbosely for posterity's sake.
 
 **Note:** I've expounded on this particular technique in this blog post (http://blog.getify.com/iterating-es6-numbers/) if you want more details. And this comment (http://blog.getify.com/iterating-es6-numbers/comment-page-1/#comment-535294) even suggests a similar trick but for making string character ranges.
 
 ### Iterator Consumption
 
-We've already shown consuming an iterator item-by-item with the `for..of` loop. But there are other ES6 structures which can consume iterators.
+We've already shown consuming an iterator item by item with the `for..of` loop. But there are other ES6 structures that can consume iterators.
 
 Let's consider the iterator attached to this array (though any iterator we choose would have the following behaviors):
 
@@ -409,15 +417,15 @@ w;						// [4,5]
 
 ## Generators
 
-All functions run-to-completion, right? That is, once a function starts running, it finishes before anything else can interrupt.
+All functions run to completion, right? In other words, once a function starts running, it finishes before anything else can interrupt.
 
-Or, so it's been for the whole history of JavaScript up to this point. As of ES6, a new somewhat exotic form of function is being introduced, called a generator. A generator can pause itself in mid-execution, and can be resumed either right away or at a later time. So, it clearly does not hold the run-to-completion guarantee that normal functions do.
+At least that's how it's been for the whole history of JavaScript up to this point. As of ES6, a new somewhat exotic form of function is being introduced, called a generator. A generator can pause itself in mid-execution, and can be resumed either right away or at a later time. So it clearly does not hold the run-to-completion guarantee that normal functions do.
 
 Moreover, each pause/resume cycle in mid-execution is an opportunity for two-way message passing, where the generator can return a value, and the controlling code that resumes it can send a value back in.
 
 As with iterators in the previous section, there are multiple ways to think about what a generator is, or rather what it's most useful for. There's no one right answer, but we'll try to consider several angles.
 
-**Note:** See the *Async & Performance* title of this series for more information about generators, and also see Chapter 4 of this title.
+**Note:** See the *Async & Performance* title of this series for more information about generators, and also see Chapter 4 of this current volume.
 
 ### Syntax
 
@@ -473,9 +481,9 @@ function *foo(x,y) {
 foo( 5, 10 );
 ```
 
-The major difference is that executing a generator, like `foo(5,10)` doesn't actually run the code in the generator. Instead, it produces an iterator which will control the generator to execute its code.
+The major difference is that executing a generator, like `foo(5,10)` doesn't actually run the code in the generator. Instead, it produces an iterator that will control the generator to execute its code.
 
-We'll come back to this a few sections from now, but briefly:
+We'll come back to this later in "Iterator Control," but briefly: 
 
 ```js
 function *foo() {
@@ -517,7 +525,7 @@ function *foo() {
 }
 ```
 
-The `yield ..` expression not only sends a value -- `yield` without a value is the same as `yield undefined` -- but also receives (e.g., is replaced by) the resumption value message. Consider:
+The `yield ..` expression not only sends a value (`yield` without a value is the same as `yield undefined`), but also receives (e.g., is replaced by) the resumption value message. Consider:
 
 ```js
 function *foo() {
@@ -539,9 +547,9 @@ function *foo() {
 
 `*foo()` here has four `yield ..` expressions, each of which will result in a pause of the generator waiting for a resumption value, which will then be used in the various expression contexts as shown.
 
-`yield` is not an operator, though when used like `yield 1` it sure looks like it. Since `yield` can be used all by itself as in `var x = yield;`, thinking of it as an operator can sometimes be misleading.
+`yield` is not an operator, though when used like `yield 1` it sure looks like it. Because `yield` can be used all by itself as in `var x = yield;`, thinking of it as an operator can sometimes be misleading.
 
-Technically `yield ..` is of the same "expression precedence" --similar conceptually to operator precedence -- as an assignment expression like `a = 3`. That means `yield ..` can basically appear anywhere `a = 3` can validly appear.
+Technically, `yield ..` is of the same "expression precedence" -- similar conceptually to operator precedence -- as an assignment expression like `a = 3`. That means `yield ..` can basically appear anywhere `a = 3` can validly appear.
 
 Let's illustrate the symmetry:
 
@@ -571,7 +579,7 @@ yield 2 + 3;			// same as `yield (2 + 3)`
 (yield 2) + 3;			// `yield 2` first, then `+ 3`
 ```
 
-Just like `=` assignment, `yield` is also "right-associative", which means that multiple `yield` expressions in succession are treated as having been `( .. )` grouped from right to left. So, `yield yield yield 3` is treated as `yield (yield (yield 3))`. Of course, a "left-associative" interpretation like `((yield) yield) yield 3` would make no sense.
+Just like `=` assignment, `yield` is also "right-associative," which means that multiple `yield` expressions in succession are treated as having been `( .. )` grouped from right to left. So, `yield yield yield 3` is treated as `yield (yield (yield 3))`. Of course, a "left-associative" interpretation like `((yield) yield) yield 3` would make no sense.
 
 Just like with operators, it's a good idea to use `( .. )` grouping, even if not strictly required, to disambiguate your intent if `yield` is combined with other operators or `yield`s.
 
@@ -589,9 +597,9 @@ function *foo() {
 }
 ```
 
-**Note:** Exactly the same as earlier discussion of `*` position in a generator's declaration, the `*` positioning in `yield *` expressions is stylistically up to you. Most other literature prefers `yield* ..`, but I prefer `yield *..`, for very symmetrical reasons as already discussed.
+**Note:** As with the `*` position in a generator's declaration (discussed earlier), the `*` positioning in `yield *` expressions is stylistically up to you. Most other literature prefers `yield* ..`, but I prefer `yield *..`, for very symmetrical reasons as already discussed.
 
-The `[1,2,3]` value produces an iterator which will step through its values, so the `*foo()` generator will yield those values out at its consumed. Another way to illustrate the behavior is in yield delegating to another generator:
+The `[1,2,3]` value produces an iterator that will step through its values, so the `*foo()` generator will yield those values out as it's consumed. Another way to illustrate the behavior is in yield delegating to another generator:
 
 ```js
 function *foo() {
@@ -607,7 +615,7 @@ function *bar() {
 
 The iterator produced from calling `foo()` is delegated to by the `*bar()` generator, meaning whatever value `*foo()` produces will be produced by `*bar()`.
 
-Whereas with `yield ..` where the completion value of the expression comes from resuming the generator with `it.next(..)`, the completion value of the `yield *..` expression comes from the return value (if any) from the delegated-to iterator.
+Whereas with `yield ..` the completion value of the expression comes from resuming the generator with `it.next(..)`, the completion value of the `yield *..` expression comes from the return value (if any) from the delegated-to iterator.
 
 Built-in iterators generally don't have return values, as we covered at the end of the "Iterator Loop" section earlier in this chapter. But if you define your own custom iterator (or generator), you can design it to `return` a value, which `yield *..` would capture:
 
@@ -627,7 +635,7 @@ function *bar() {
 
 While the `1`, `2`, and `3` values would be `yield`ed out of `*foo()` and then out of `*bar()`, the `4` value returned from `*foo()` is the completion value of the `yield *foo()` expression, which then gets assigned to `x`.
 
-Since `yield *` can call another generator (by way of delegating to its iterator), it can also perform a sort of generator recursion by calling itself:
+Because `yield *` can call another generator (by way of delegating to its iterator), it can also perform a sort of generator recursion by calling itself:
 
 ```js
 function *foo(x) {
@@ -642,11 +650,11 @@ foo( 1 );
 
 The result from `foo(1)` and then calling the iterator's `next()` to run it through its recursive steps will be `24`. The first `*foo(..)` run has `x` at value `1`, which is `x < 3`. `x + 1` is passed recursively to `*foo(..)`, so `x` is then `2`. One more recursive call results in `x` of `3`.
 
-Now, since `x < 3` fails, the recursion stops, and `return 3 * 2` gives `6` back to the previous call's `yield *..` expression, which is then assigned to `x`. Another `return 6 * 2` returns `12` back to the previous call's `x`. Finally `12 * 2`, or `24`, is returned from the completed run of the `*foo(..)` generator.
+Now, because `x < 3` fails, the recursion stops, and `return 3 * 2` gives `6` back to the previous call's `yield *..` expression, which is then assigned to `x`. Another `return 6 * 2` returns `12` back to the previous call's `x`. Finally `12 * 2`, or `24`, is returned from the completed run of the `*foo(..)` generator.
 
 ### Iterator Control
 
-We briefly introduced the concept a few sections ago that generators are controlled by iterators. Let's fully dig into that now.
+Earlier, we briefly introduced the concept that generators are controlled by iterators. Let's fully dig into that now.
 
 Recall the recursive `*foo(..)` from the previous section. Here's how we'd run it:
 
@@ -664,7 +672,7 @@ it.next();				// { value: 24, done: true }
 
 In this case, the generator doesn't really ever pause, as there's no `yield ..` expression. Instead, `yield *` just keeps the current iteration step going via the recursive call. So, just one call to the iterator's `next()` function fully runs the generator.
 
-Now let's consider a generator which will have multiple steps and thus multiple produced values:
+Now let's consider a generator that will have multiple steps and thus multiple produced values:
 
 ```js
 function *foo() {
@@ -885,7 +893,7 @@ catch (err) {
 it.next();				// { value: undefined, done: true }
 ```
 
-Since `throw(..)` basically injects a `throw ..` in replacement of the `yield 1` line of the generator, and nothing handles this exception, it immediately propagates back out to the calling code, which handles it with a `try..catch`.
+Because `throw(..)` basically injects a `throw ..` in replacement of the `yield 1` line of the generator, and nothing handles this exception, it immediately propagates back out to the calling code, which handles it with a `try..catch`.
 
 Unlike `return(..)`, the iterator's `throw(..)` method is never called automatically.
 
@@ -1011,7 +1019,7 @@ function foo() {
 
 Now, we need some inner variable to keep track of where we are in the steps of our "generator's" logic. We'll call it `state`. There will be three states: `0` initially, `1` while waiting to fulfill the `yield` expression, and `2` once the generator is complete.
 
-Each time `next(..)` is called, we need to process the next step, and then increment `state`. For convenience, we'll put each step into a `case` clause of a `switch` statement, and we'll hold that in an inner function called `nextState(..)` that `next(..)` can call. Also, since `x` is a variable across the overall scope of the "generator", it needs to live outside the `nextState(..)` function.
+Each time `next(..)` is called, we need to process the next step, and then increment `state`. For convenience, we'll put each step into a `case` clause of a `switch` statement, and we'll hold that in an inner function called `nextState(..)` that `next(..)` can call. Also, because `x` is a variable across the overall scope of the "generator," it needs to live outside the `nextState(..)` function.
 
 Here it is all together (obviously somewhat simplified, to keep the conceptual illustration clearer):
 
@@ -1151,7 +1159,7 @@ Before we get into the specific syntax, it's important to understand some fairly
 
    ES6 doesn't actually specify or handle the mechanics of how these load requests work. There's a separate notion of a Module Loader, where each hosting environment (browser, Node.js, etc.) provides a default Loader appropriate to the environment. The importing of a module uses a string value to represent where to get the module (URL, file path, etc), but this value is opaque in your program and only meaningful to the Loader itself.
 
-   You can define your own custom Loader if you want more fine-grained control than the default Loader affords -- which is basically none, since it's totally hidden from your program's code.
+   You can define your own custom Loader if you want more fine-grained control than the default Loader affords -- which is basically none, as it's totally hidden from your program's code.
 
 As you can see, ES6 modules will serve the overall use-case of organizing code with encapsulation, controlling public APIs, and referencing dependency imports. But they have a very particular way of doing so, and that may or may not fit very closely with how you've already been doing modules for years.
 
@@ -1203,7 +1211,7 @@ var bar = [1,2,3];
 export { foo, awesome, bar };
 ```
 
-These are all called *named exports*, since you are in effect exporting the name bindings of the variables/functions/etc.
+These are all called *named exports*, as you are in effect exporting the name bindings of the variables/functions/etc.
 
 Anything you don't *label* with `export` stays private inside the scope of the module. That is, even though something like `var bar = ..` looks like it's declaring at the top-level global scope, the top-level scope is actually the module itself; there is no global scope in modules.
 
@@ -1289,7 +1297,7 @@ In this version of the module export, the default export binding is actually to 
 
 Be very careful of this subtle gotcha in default export syntax, especially if your logic calls for export values to be updated. If you never plan to update a default export's value, `export default ..` is fine. If you do plan to update the value, you must use `export { .. as default }`. Either way, make sure to comment your code to explain your intent!
 
-Since there can only be one `default` per module, you may be tempted to design your module with one default export of a plain object with all your API methods on it, such as:
+Because there can only be one `default` per module, you may be tempted to design your module with one default export of a plain object with all your API methods on it, such as:
 
 ```js
 export default {
@@ -1551,7 +1559,7 @@ export default function bar(y) {
 }
 ```
 
-These two functions, `foo(..)` and `bar(..)`, would work as standard function declarations if they were in the same scope, since the declarations are "hoisted" to the whole scope and thus available to each other regardless of authoring order.
+These two functions, `foo(..)` and `bar(..)`, would work as standard function declarations if they were in the same scope, because the declarations are "hoisted" to the whole scope and thus available to each other regardless of authoring order.
 
 With modules, you have declarations in entirely different scopes, so ES6 has to do extra work to help make these circular references work.
 
@@ -1653,7 +1661,7 @@ From nearly the beginning of JavaScript, syntax and development patterns have al
 
 Of course, JS "classes" aren't nearly the same as traditional classical classes. The differences are well documented, so I won't belabor that point any further here.
 
-**Note:** To learn more about the patterns used in JS to fake "classes", and an alternate view of prototypes called "delegation", see the second half of the *this & Object Prototypes* title of this series.
+**Note:** To learn more about the patterns used in JS to fake "classes," and an alternate view of prototypes called "delegation," see the second half of the *this & Object Prototypes* title of this series.
 
 ### `class`
 
@@ -1706,9 +1714,9 @@ f.y;						// 15
 f.gimmeXY();				// 75
 ```
 
-**Warning:** Though `class Foo` is much like `function Foo`, there are important differences. The `Foo(..)` call *must* be made with `new` -- a pre-ES6 approach of `Foo.call( obj )` will *not* work. Also, while `function Foo` is "hoisted" (see the *Scope & Closures* title of this series), `class Foo` is not; the `extends ..` clause specifies an expression that cannot be "hoisted". So, you must declare a `class` before you can instantiate it. Lastly, `class Foo` in the top global scope creates a lexical `Foo` identifier in that scope, but unlike `function Foo` does not create a global object property of that name.
+**Warning:** Though `class Foo` is much like `function Foo`, there are important differences. The `Foo(..)` call *must* be made with `new` -- a pre-ES6 approach of `Foo.call( obj )` will *not* work. Also, while `function Foo` is "hoisted" (see the *Scope & Closures* title of this series), `class Foo` is not; the `extends ..` clause specifies an expression that cannot be "hoisted." So, you must declare a `class` before you can instantiate it. Lastly, `class Foo` in the top global scope creates a lexical `Foo` identifier in that scope, but unlike `function Foo` does not create a global object property of that name.
 
-The established `instanceof` operator still works with ES6 classes, since `class` just creates a constructor function of the same name. However, ES6 introduces a way to customize how `instanceof` works, using `Symbol.hasInstance` (see "Well Known Symbols" in Chapter 7).
+The established `instanceof` operator still works with ES6 classes, because `class` just creates a constructor function of the same name. However, ES6 introduces a way to customize how `instanceof` works, using `Symbol.hasInstance` (see "Well Known Symbols" in Chapter 7).
 
 Another way of thinking about `class`, which I find more convenient, is as a *macro* that is used to automatically populate a `prototype` object. Optionally, it also wires up the `[[Prototype]]` relationship if using `extends` (see the next section).
 
@@ -1740,7 +1748,7 @@ b.z;						// 25
 b.gimmeXYZ();				// 1875
 ```
 
-A significant new addition is `super`, which is actually something not directly possible (without some unfortunate hack tradeoffs). In the constructor, `super` automatically refers to the "parent constructor", which in the previous example is `Foo(..)`. In a method, it refers to the "parent object", such that you can then make a property/method access off it, such as `super.gimmeXY()`.
+A significant new addition is `super`, which is actually something not directly possible (without some unfortunate hack tradeoffs). In the constructor, `super` automatically refers to the "parent constructor," which in the previous example is `Foo(..)`. In a method, it refers to the "parent object," such that you can then make a property/method access off it, such as `super.gimmeXY()`.
 
 `Bar extends Foo` of course means to link the `[[Prototype]]` of `Bar.prototype` to `Foo.prototype`. So, `super` in a method like `gimmeXYZ()` specifically means `Foo.prototype`, whereas `super` means `Foo` when used in the `Bar` constructor.
 
@@ -1820,7 +1828,7 @@ constructor(...args) {
 
 This is an important detail to note. Not all class languages have the subclass constructor automatically call the parent constructor. C++ does, but Java does not. But more importantly, in pre-ES6 classes, such automatic "parent constructor" calling does not happen. Be careful when converting to ES6 `class` if you've been relying on such calls *not* happening.
 
-Another perhaps surprising deviation/limitation of ES6 subclass constructors: in a constructor of a subclass, you cannot access `this` until `super(..)` has been called. The reason is nuanced and complicated, but it boils down to the fact that the parent constructor is actually the one creating/initializing your instance's `this`. Pre-ES6, it works oppositely; the `this` object is created by the "subclass constructor", and then you  call a "parent constructor" with the context of the "subclass" `this`.
+Another perhaps surprising deviation/limitation of ES6 subclass constructors: in a constructor of a subclass, you cannot access `this` until `super(..)` has been called. The reason is nuanced and complicated, but it boils down to the fact that the parent constructor is actually the one creating/initializing your instance's `this`. Pre-ES6, it works oppositely; the `this` object is created by the "subclass constructor," and then you  call a "parent constructor" with the context of the "subclass" `this`.
 
 Let's illustrate. This works pre-ES6:
 
@@ -1853,7 +1861,7 @@ class Bar extends Foo {
 }
 ```
 
-In this case, the fix is simple. Just swap the two statements in the subclass `Bar` constructor. However, if you've been relying pre-ES6 on being able to skip calling the "parent constructor", beware because that won't be allowed anymore.
+In this case, the fix is simple. Just swap the two statements in the subclass `Bar` constructor. However, if you've been relying pre-ES6 on being able to skip calling the "parent constructor," beware because that won't be allowed anymore.
 
 #### `extend`ing Natives
 
@@ -1876,7 +1884,7 @@ a.last();					// 3
 
 Prior to ES6, a fake "subclass" of `Array` using manual object creation and linking to `Array.prototype` only partially worked. It missed out on the special behaviors of a real array, such as the automatically updating `length` property. ES6 subclasses should fully work with "inherited" and augmented behaviors as expected!
 
-Another common pre-ES6 "subclass" limitation is with the `Error` object, in creating custom error "subclasses". Genuine `Error` objects get special behavior by the browser that when created, they capture the special `stack` information, including the line number and file where the error is created. Pre-ES6 custom error "subclasses" get no such treatment, which severely limits their usefulness. ES6 to the rescue:
+Another common pre-ES6 "subclass" limitation is with the `Error` object, in creating custom error "subclasses." Genuine `Error` objects get special behavior by the browser that when created, they capture the special `stack` information, including the line number and file where the error is created. Pre-ES6 custom error "subclasses" get no such treatment, which severely limits their usefulness. ES6 to the rescue:
 
 ```js
 class Oops extends Error {
@@ -1894,7 +1902,7 @@ The `ouch` custom error object in this previous snippet will behave like any oth
 
 ### `new.target`
 
-ES6 introduces a new concept called a "Meta Property", in the form of `new.target`. If that looks strange, it is; pairing a keyword with a `.` and a property name is definitely out of the ordinary pattern for JS.
+ES6 introduces a new concept called a "Meta Property," in the form of `new.target`. If that looks strange, it is; pairing a keyword with a `.` and a property name is definitely out of the ordinary pattern for JS.
 
 `new.target` is a new "magical" value available in all functions, though in normal functions it will always be `undefined`. In any constructor, `new.target` always points at the constructor `new` directly invoked, even if the constructor is in a parent class and was delegated to by a `super(..)` call from a child constructor. Consider:
 
