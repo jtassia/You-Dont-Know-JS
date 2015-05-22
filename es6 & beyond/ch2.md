@@ -139,7 +139,7 @@ This explicitness on your part, which is up to you to maintain with discipline, 
 
 #### `let` + `for`
 
-The only exception I'd make to the preference for the *explicit* form of `let` declaration blocking is a `let` that appears in the header of a `for` loop. The reason may seem nuanced, but I consider it to be one of the more important ES6 features.
+The only exception I'd make to the preference for the *explicit* form of `let` declaration blocking is a `let` that appears in the header of a `for` loop. The reason may seem nuanced, but I believe it to be one of the more important ES6 features.
 
 Consider:
 
@@ -977,7 +977,7 @@ There are two `...` operators in use here, and they're both gathering values in 
 
 #### Destructuring Defaults and Parameter Defaults
 
-There's one subtle point you should be particularly careful to notice, the difference in behavior between a destructuring default value and a function parameter default value.
+There's one subtle point you should be particularly careful to notice -- the difference in behavior between a destructuring default value and a function parameter default value. For example:
 
 ```js
 function f6({ x = 10 } = {}, { y } = { y: 10 }) {
@@ -1003,7 +1003,7 @@ In the previous snippet, we *are* passing a second argument (`{}`), so the defau
 
 Now, compare `{ y } = { y: 10 }` to `{ x = 10 } = {}`.
 
-For the `x`'s form usage, if the first function argument is omitted or `undefined`, the `{}` empty object default applies. *Then*, whatever value is in the first argument position -- either the default `{}` or whatever you passed in -- is destructured with the `{ x = 10 }`, which checks to see if an `x` property is found, and if not found (or `undefined`), the `10` default value is applied to the `x` named parameter.
+For the `x`'s form usage, if the first function argument is omitted or `undefined`, the `{}` empty object default applies. Then, whatever value is in the first argument position -- either the default `{}` or whatever you passed in -- is destructured with the `{ x = 10 }`, which checks to see if an `x` property is found, and if not found (or `undefined`), the `10` default value is applied to the `x` named parameter.
 
 Deep breath. Read back over those last few paragraphs a couple of times. Let's review via code:
 
@@ -1029,6 +1029,8 @@ If that's still a bit fuzzy, go back and read it again, and play with this yours
 #### Nested Defaults: Destructured and Restructured
 
 An interesting idiom emerges -- though it may be confusing to get used to -- for setting defaults for a nested object's properties, using object destructuring with what I'd call *restructuring*.
+
+//TODO Kyle: Hmm... This sentence seems unclear to me.  Could we make it "Although it may at first be difficult to grasp, an interesting idiom emerges for setting defaults for a nested object's properties: using"? Or have I mangled the meaning?
 
 Consider a set of defaults in a nested object structure, like the following:
 
@@ -1059,7 +1061,7 @@ var config = {
 };
 ```
 
-You can of course do so manually, as probably some of you have done in the past:
+You can of course do so manually, as you might have done in the past:
 
 ```js
 config.options = config.options || {};
@@ -1072,7 +1074,7 @@ config.options.enable = (config.options.enable !== undefined) ?
 
 Yuck.
 
-Others may prefer the assign-overwrite approach to this task. You might be tempted by the ES6 `Object.assign(..)` (see Chapter 6) utility to clone the properties first from `defaults` and then overwritten with the cloned properties from `config`, as so:
+Others may prefer the assign-overwrite approach to this task. You might be tempted by the ES6 `Object.assign(..)` utility (see Chapter 6) to clone the properties first from `defaults` and then overwritten with the cloned properties from `config`, as so:
 
 ```js
 config = Object.assign( {}, defaults, config );
@@ -1100,15 +1102,15 @@ config.log = config.log || {};
 } = config;
 ```
 
-Not as nice as the false promise of `Object.assign(..)` (being that it's shallow only), but it's better than the earlier shown manual approach by a fair bit, I think. Still unfortunately verbose and repetitive.
+Not as nice as the false promise of `Object.assign(..)` (being that it's shallow only), but it's better than the manual approach by a fair bit, I think. It is still unfortunately verbose and repetitive, though.
 
-The previous snippet's approach works because I'm hacking the destructuring and defaults mechansim to do the property `=== undefined` checks and assignment decisions for me. It's a trick in that I'm destructuring `config` (see the `= config` at the end of the snippet), but I'm re-assigning all the destructured values right back into `config`, with the `config.options.enable` assignment references.
+The previous snippet's approach works because I'm hacking the destructuring and defaults mechansim to do the property `=== undefined` checks and assignment decisions for me. It's a trick in that I'm destructuring `config` (see the `= config` at the end of the snippet), but I'm reassigning all the destructured values right back into `config`, with the `config.options.enable` assignment references.
 
 Still too much, though. Let's see if we can make anything better.
 
 The following trick works best if you know that all the various properties you're destructuring are uniquely named. You can still do it even if that's not the case, but it's not as nice -- you'll have to do the destructuring in stages, or create unique local variables as temporary aliases.
 
-If we fully destructure all the properties into top level variables, we can then immediately restructure to reconstitute the original nested object structure.
+If we fully destructure all the properties into top-level variables, we can then immediately restructure to reconstitute the original nested object structure.
 
 But all those temporary variables hanging around would pollute scope. So, let's use block scoping (see "Block-Scoped Declarations" earlier in this chapter) with a general `{ }` enclosing block:
 
@@ -1233,7 +1235,7 @@ runSomething( {
 } );
 ```
 
-This obviously silly code just generates two random numbers and subtracts the smaller from the bigger. But what it does isn't the important part, rather how it's defined. Let's focus on the object literal and function definition, as we see here:
+This obviously silly code just generates two random numbers and subtracts the smaller from the bigger. But what's important here isn't what it does, but rather how it's defined. Let's focus on the object literal and function definition, as we see here:
 
 ```js
 runSomething( {
@@ -1277,7 +1279,7 @@ That looks fine, and should work if you always invoke the method as `controller.
 btn.addEventListener( "click", controller.makeRequest, false );
 ```
 
-Of course, you can solve that by passing `controller.makeRequest.bind(controller)` as the handler reference to bind the event to. But, yuck.
+Of course, you can solve that by passing `controller.makeRequest.bind(controller)` as the handler reference to bind the event to. But yuck -- it isn't very appealing.
 
 Or what if your inner `this.makeRequest(..)` call needs to be made from a nested function? You'll have another `this` binding hazard, which people will often solve with the hacky `var self = this`, such as:
 
@@ -1308,7 +1310,7 @@ runSomething( {
 } );
 ```
 
-The second `something` here provides a super convenient lexical identifier that will always point to the function itself, giving us the perfect reference for recursion, event binding/unbinding, etc -- no messing around with `this` or trying to use an untrustable object reference.
+The second `something` here provides a super convenient lexical identifier that will always point to the function itself, giving us the perfect reference for recursion, event binding/unbinding, and so on -- no messing around with `this` or trying to use an untrustable object reference.
 
 Great!
 
@@ -1348,9 +1350,9 @@ Yeah, yuck.
 
 **Note:** You may be tempted to think that `=>` arrow functions are a good solution here, but they're equally insufficient, as they're also anonymous function expressions. We'll cover them in "Arrow Functions" later in this chapter.
 
-The partially redeeming news is that our `something(x,y)` concise method won't be totally anonymous. See Chapter 7 "Function Names" for information about ES6 function name inference rules. That won't help us for our recursion, but it helps with debugging at least.
+The partially redeeming news is that our `something(x,y)` concise method won't be totally anonymous. See "Function Names" in Chapter 7 for information about ES6 function name inference rules. That won't help us for our recursion, but it helps with debugging at least.
 
-So what are we left to conclude about concise methods? They're short and sweet, and nice convenience. But you should only use them if you're never going to need them to do recursion or event binding/unbinding. Otherwise, stick to your old school `something: function something(..)` method definitions.
+So what are we left to conclude about concise methods? They're short and sweet, and a nice convenience. But you should only use them if you're never going to need them to do recursion or event binding/unbinding. Otherwise, stick to your old-school `something: function something(..)` method definitions.
 
 A lot of your methods are probably going to benefit from concise method definitions, so that's great news! Just be careful of the few where there's an un-naming hazard.
 
@@ -1379,7 +1381,7 @@ o.__id;			// 21 -- still!
 
 These getter and setter literal forms are also present in classes; see Chapter 3.
 
-**Warning:** It may not be obvious, but the setter literal must have exactly one declared parameter; omitting it or listing others is illegal syntax. The single required parameter *can* use destructuring and defaults, like for example `set id({ id: v = 0 }) { .. }`, but the gather/rest `...` is not allowed (`set id(...v) { .. }`).
+**Warning:** It may not be obvious, but the setter literal must have exactly one declared parameter; omitting it or listing others is illegal syntax. The single required parameter *can* use destructuring and defaults (e.g., `set id({ id: v = 0 }) { .. }`), but the gather/rest `...` is not allowed (`set id(...v) { .. }`).
 
 ### Computed Property Names
 
