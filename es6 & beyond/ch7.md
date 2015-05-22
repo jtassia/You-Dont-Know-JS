@@ -160,9 +160,9 @@ There's a slight nuance here, which is that the `constructor()` inside the `Pare
 
 **Warning:** As with all meta programming techniques, be careful of creating code that's too clever for your future self or others maintaining your code to understand. Use these tricks with caution.
 
-## Well Known Symbols
+## Well-Known Symbols
 
-In Chapter 2 "Symbols", we covered the new ES6 primitive type `symbol`. In addition to symbols you can define in your own program, JS pre-defines a number of built-in symbols, referred to as *well known symbols* (WKS).
+In Chapter 2 "Symbols", we covered the new ES6 primitive type `symbol`. In addition to symbols you can define in your own program, JS pre-defines a number of built-in symbols, referred to as *well-known symbols* (WKS).
 
 These symbol values are defined primarily to expose special meta properties that are being exposed to your JS programs to give you more control over JS's behavior.
 
@@ -319,7 +319,7 @@ The `Symbol.toPrimitive` method will be provided with a *hint* of `"string"`, `"
 
 ### Regular Expression Symbols
 
-There are four well known symbols that can be overridden for regular expression objects, which control how those regular expressions are used by the four corresponding `String.prototype` functions of the same name:
+There are four well-known symbols that can be overridden for regular expression objects, which control how those regular expressions are used by the four corresponding `String.prototype` functions of the same name:
 
 * `@@match`: The `Symbol.match` value of a regular expression is the method used to match all or part of a string value with the given regular expression. It's used by `String.prototype.match(..)` if you pass it a regular expression for the pattern matching.
 
@@ -1273,7 +1273,7 @@ Meta programming is when you turn the logic of your program to focus on itself (
 
 Prior to ES6, JavaScript already had quite a bit of meta programming capability, but ES6 significantly ramps that up with several new features.
 
-From function name inferences for anonymous functions to meta properties that give you information about things like how a constructor was invoked, you can inspect the program structure while it runs more than ever before. Well Known Symbols let you override intrinsic behaviors, such as coercion of an object to a primitive value. Proxies can intercept and customize various low-level operations on objects, and `Reflect` provides utilities to emulate them.
+From function name inferences for anonymous functions to meta properties that give you information about things like how a constructor was invoked, you can inspect the program structure while it runs more than ever before. Well-known symbols let you override intrinsic behaviors, such as coercion of an object to a primitive value. Proxies can intercept and customize various low-level operations on objects, and `Reflect` provides utilities to emulate them.
 
 Feature testing, even for subtle semantic behaviors like Proper Tail Call optimizations, shifts the meta programming focus from your program to the JS engine capabilities itself. By knowing more about what the environment can do, your programs can adjust themselves to the best fit as they run.
 
