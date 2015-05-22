@@ -691,7 +691,9 @@ for (var v of foo()) {
 // 1 2 3
 ```
 
-**Note:** The `for..of` loop requires an iterable. A generator function reference (like `foo`) by itself is not an iterable; you must execute it with `foo()` to get the iterator (which is also an iterable, as we explained earlier in this chapter). You could theoretically extend the `GeneratorPrototype` (the prototype of all generator functions) with a `Symbol.iterator` function which essentially just did `return this()`. That would make the `foo` reference itself an iterable, which means `for (var v of foo) { .. }` -- notice no `()` on `foo` -- works.
+**Note:** The `for..of` loop requires an iterable. A generator function reference (like `foo`) by itself is not an iterable; you must execute it with `foo()` to get the iterator (which is also an iterable, as we explained earlier in this chapter). You could theoretically extend the `GeneratorPrototype` (the prototype of all generator functions) with a `Symbol.iterator` function which essentially just did `return this()`. That would make the `foo` reference itself an iterable, which means `for (var v of foo) { .. }` (notice no `()` on `foo`) works.
+
+//TODO Kyle: "function that essentially just does `return this()`."?
 
 Let's instead iterate the generator manually:
 
@@ -711,7 +713,7 @@ it.next();				// { value: 3, done: false }
 it.next();				// { value: undefined, done: true }
 ```
 
-If you look closely, there are 3 `yield` statements and 4 `next()` calls. That may seem like a strange mismatch. In fact, there will always be one more `next()` call than `yield` expression, assuming all are evaluated and the generator is fully run to completion.
+If you look closely, there are three `yield` statements and four `next()` calls. That may seem like a strange mismatch. In fact, there will always be one more `next()` call than `yield` expression, assuming all are evaluated and the generator is fully run to completion.
 
 But if you look at it from the opposite perspective (inside-out instead of outside-in), the matching between `yield` and `next()` makes more sense.
 
@@ -738,7 +740,7 @@ var it = foo();
 it.next();				// { value: 1, done: false }
 ```
 
-That first `next()` call is starting up the generator from its initial paused state, and running it to the first `yield`. At the moment you call that first `next()`, there's no `yield ..` expression waiting for a completion. If you passed a value to that first `next()` call, it would just be thrown away, because nobody is waiting to receive such value.
+That first `next()` call is starting up the generator from its initial paused state, and running it to the first `yield`. At the moment you call that first `next()`, there's no `yield ..` expression waiting for a completion. If you passed a value to that first `next()` call, it would just be thrown away, because nobody is waiting to receive such a value.
 
 Now, let's answer the currently pending question, "What value should I assign to `x`?" We'll answer it by sending a value to the *next* `next(..)` call:
 
@@ -839,7 +841,7 @@ it.return( 42 );		// cleanup!
 						// { value: 42, done: true }
 ```
 
-**Warning:** Do not put a `yield` statement inside the `finally` clause! It's valid and legal, but it's a really terrible idea. It acts in a sense as deferring the completion of the `return(..)` call you made, as any `yield ..` expressions in the `finally` clause are respected to pause and send messages; you don't immediately get a completed generator as expected. There's basically no good reason to opt-in to that crazy *bad part*, so avoid doing so!
+**Warning:** Do not put a `yield` statement inside the `finally` clause! It's valid and legal, but it's a really terrible idea. It acts in a sense as deferring the completion of the `return(..)` call you made, as any `yield ..` expressions in the `finally` clause are respected to pause and send messages; you don't immediately get a completed generator as expected. There's basically no good reason to opt in to that crazy *bad part*, so avoid doing so!
 
 In addition to the previous snippet showing how `return(..)` aborts the generator while still triggering the `finally` clause, it also demonstrates that a generator produces a whole new iterator each time it's called. In fact, you can use multiple iterators attached to the same generator concurrently:
 
@@ -870,7 +872,7 @@ it1.next();				// { value: undefined, done: true }
 
 Instead of calling `return(..)`, you can call `throw(..)`. Just like `return(x)` is essentially injecting a `return x` into the generator at its current pause point, calling `throw(x)` is essentially like injecting a `throw x` at the pause point.
 
-Other than the exception behavior -- we cover what that means to `try` clauses in the next section -- `throw(..)` produces the same sort of early completion that aborts the generator's run at its current pause point.
+Other than the exception behavior (we cover what that means to `try` clauses in the next section), `throw(..)` produces the same sort of early completion that aborts the generator's run at its current pause point. For example:
 
 ```js
 function *foo() {
@@ -988,7 +990,7 @@ If `*bar()` didn't have a `try..catch` around the `yield *..` expression, the er
 
 ### Transpiling a Generator
 
-Is it possible to represent a generator's capabilities prior to ES6? It turns out it is, and there are several great tools which do so, including most notably the Regenerator (https://facebook.github.io/regenerator/) tool from Facebook.
+Is it possible to represent a generator's capabilities prior to ES6? It turns out it is, and there are several great tools that do so, including most notably Facebook's Regenerator tool (https://facebook.github.io/regenerator/).
 
 But just to better understand generators, let's try our hand at manually converting. Basically, we're going to create a simple closure-based state machine.
 
@@ -1017,7 +1019,7 @@ function foo() {
 }
 ```
 
-Now, we need some inner variable to keep track of where we are in the steps of our "generator's" logic. We'll call it `state`. There will be three states: `0` initially, `1` while waiting to fulfill the `yield` expression, and `2` once the generator is complete.
+Now, we need some inner variable to keep track of where we are in the steps of our "generator"'s logic. We'll call it `state`. There will be three states: `0` initially, `1` while waiting to fulfill the `yield` expression, and `2` once the generator is complete.
 
 Each time `next(..)` is called, we need to process the next step, and then increment `state`. For convenience, we'll put each step into a `case` clause of a `switch` statement, and we'll hold that in an inner function called `nextState(..)` that `next(..)` can call. Also, because `x` is a variable across the overall scope of the "generator," it needs to live outside the `nextState(..)` function.
 
@@ -1071,7 +1073,7 @@ it.next( 10 );			// 10
 						// { value: undefined, done: true }
 ```
 
-Not bad, huh!? Hopefully this exercise solidifies in your mind that generators are actually just simple syntax for state machine logic. That makes them widely applicable.
+Not bad, huh? Hopefully this exercise solidifies in your mind that generators are actually just simple syntax for state machine logic. That makes them widely applicable.
 
 ### Generator Uses
 
@@ -1079,7 +1081,7 @@ So, now that we much more deeply understand how generators work, what are they u
 
 We've seen two major patterns:
 
-* *Producing a series of values:* This usage can be simple like random strings or incremented numbers, or it can represent more structured data access, such as iterating over rows returned from a database query.
+* *Producing a series of values:* This usage can be simple (e.g., random strings or incremented numbers), or it can represent more structured data access (e.g., iterating over rows returned from a database query).
 
    Either way, we use the iterator to control a generator so that some logic can be invoked for each call to `next(..)`. Normal iterators on data structures merely pull values without any controlling logic.
 * *Queue of tasks to perform serially:* This usage often represents flow control for the steps in an algorithm, where each step requires retrieval of data from some external source. The fulfillment of each piece of data may be immediate, or may be asynchronously delayed.
@@ -1112,7 +1114,7 @@ var me = Hello( "Kyle" );
 me.greeting();			// Hello Kyle!
 ```
 
-This `Hello(..)` module can produce multiple instances by being called subsequent times. Sometimes, a module is only called for as a singleton -- just needs one instance -- in which case a slight variation on the previous snippet, using an IIFE, is common:
+This `Hello(..)` module can produce multiple instances by being called subsequent times. Sometimes, a module is only called for as a singleton (i.e., it just needs one instance), in which case a slight variation on the previous snippet, using an IIFE, is common:
 
 ```js
 var me = (function Hello(name){
@@ -1131,7 +1133,7 @@ me.greeting();			// Hello Kyle!
 
 This pattern is tried and tested. It's also flexible enough to have a wide assortment of variations for a number of different scenarios.
 
-One of the most common is the Asynchronous Module Definition (AMD), and another is the Universal Module Definition (UMD). We won't cover the particulars of these patterns and techniques here, but they're explained extensively in many places online.
+One of the most common is the asynchronous module definition (AMD), and another is the universal module definition (UMD). We won't cover the particulars of these patterns and techniques here, but they're explained extensively in many places online.
 
 ### Moving Forward
 
@@ -1139,14 +1141,14 @@ As of ES6, we no longer need to rely on the enclosing function and closure to pr
 
 Before we get into the specific syntax, it's important to understand some fairly significant conceptual differences with ES6 modules compared to how you may have dealt with modules in the past:
 
-* ES6 modules are file-based, meaning one module per file. At this time, there is no standardized way of combining multiple modules into a single file.
+* ES6 uses file-based modules, meaning one module per file. At this time, there is no standardized way of combining multiple modules into a single file.
 
    That means that if you are going to load ES6 modules directly into a browser web application, you will be loading them individually, not as a large bundle in a single file as has been common in performance optimization efforts.
 
-   It's expected that the contemporaneous advent of HTTP/2 will significantly mitigate any such performance concerns, as it operates on a persistent socket connection and thus can very efficiently load many smaller files in parallel and interleaved with each other.
+   It's expected that the contemporaneous advent of HTTP/2 will significantly mitigate any such performance concerns, as it operates on a persistent socket connection and thus can very efficiently load many smaller files in parallel and interleaved with one another.
 * The API of an ES6 module is static. That is, you define statically what all the top-level exports are on your module's public API, and those cannot be amended later.
 
-   Some uses are accustomed to being able to provide dynamic API definitions, where methods can be added/removed/replaced in response to run-time conditions. Either these uses will have to change to fit with ES6 static APIs, or they will have to restrain the dynamic changes to properties/methods of a second-level object.
+   Some uses are accustomed to being able to provide dynamic API definitions, where methods can be added/removed/replaced in response to runtime conditions. Either these uses will have to change to fit with ES6 static APIs, or they will have to restrain the dynamic changes to properties/methods of a second-level object.
 * ES6 modules are singletons. That is, there's only one instance of the module, which maintains its state. Every time you import that module into another module, you get a reference to the one centralized instance. If you want to be able to produce multiple module instances, your module will need to provide some sort of factory to do it.
 * The properties and methods you expose on a module's public API are not just normal assignments of values or references. They are actual bindings (almost like pointers) to the identifiers in your inner module definition.
 
@@ -1157,11 +1159,11 @@ Before we get into the specific syntax, it's important to understand some fairly
 
    However, don't panic about the performance implications. Because ES6 modules have static definitions, the import requirements can be statically scanned, and loads will happen preemptively, even before you've used the module.
 
-   ES6 doesn't actually specify or handle the mechanics of how these load requests work. There's a separate notion of a Module Loader, where each hosting environment (browser, Node.js, etc.) provides a default Loader appropriate to the environment. The importing of a module uses a string value to represent where to get the module (URL, file path, etc), but this value is opaque in your program and only meaningful to the Loader itself.
+   ES6 doesn't actually specify or handle the mechanics of how these load requests work. There's a separate notion of a Module Loader, where each hosting environment (browser, Node.js, etc.) provides a default Loader appropriate to the environment. The importing of a module uses a string value to represent where to get the module (URL, file path, etc.), but this value is opaque in your program and only meaningful to the Loader itself.
 
    You can define your own custom Loader if you want more fine-grained control than the default Loader affords -- which is basically none, as it's totally hidden from your program's code.
 
-As you can see, ES6 modules will serve the overall use-case of organizing code with encapsulation, controlling public APIs, and referencing dependency imports. But they have a very particular way of doing so, and that may or may not fit very closely with how you've already been doing modules for years.
+As you can see, ES6 modules will serve the overall use case of organizing code with encapsulation, controlling public APIs, and referencing dependency imports. But they have a very particular way of doing so, and that may or may not fit very closely with how you've already been doing modules for years.
 
 #### CommonJS
 
@@ -1169,7 +1171,7 @@ There's a similar, but not fully compatible, module syntax called CommonJS, whic
 
 For lack of a more tactful way to say this, in the long run, ES6 modules essentially are bound to supercede all previous formats and standards for modules, even CommonJS, as they are built on syntactic support in the language. This will, in time, inevitably win out as the superior approach, if for no other reason than ubiquity.
 
-We face a fairly long road to get to that point, though. There are literally hundreds of thousands of CommonJS style modules in the server-side JavaScript world, and ten times that many modules of varying format standards (UMD, AMD, ad hoc) in the browser world. It will take many years for the transitions to make any significant progress.
+We face a fairly long road to get to that point, though. There are literally hundreds of thousands of CommonJS style modules in the server-side JavaScript world, and 10 times that many modules of varying format standards (UMD, AMD, ad hoc) in the browser world. It will take many years for the transitions to make any significant progress.
 
 In the interim, module transpilers/converters will be an absolute necessity. You might as well just get used to that new reality. Whether you author in regular modules, AMD, UMD, CommonJS, or ES6, these tools will have to parse and convert to a format that is suitable for whatever environment your code will run in.
 
@@ -1213,7 +1215,7 @@ export { foo, awesome, bar };
 
 These are all called *named exports*, as you are in effect exporting the name bindings of the variables/functions/etc.
 
-Anything you don't *label* with `export` stays private inside the scope of the module. That is, even though something like `var bar = ..` looks like it's declaring at the top-level global scope, the top-level scope is actually the module itself; there is no global scope in modules.
+Anything you don't *label* with `export` stays private inside the scope of the module. That is, although something like `var bar = ..` looks like it's declaring at the top-level global scope, the top-level scope is actually the module itself; there is no global scope in modules.
 
 **Note:** Modules *do* still have access to `window` and all the "globals" that hang off it, just not as lexical top-level scope. However, you really should stay away from the globals in your modules if at all possible.
 
@@ -1227,9 +1229,11 @@ export { foo as bar };
 
 When this module is imported, only the `bar` member name is available to import; `foo` stays hidden inside the module.
 
-Module exports are not just normal assignments of values or references, as you're accustomed to with the `=` assignment operator. Actually, when you export something, you're exporting a binding (kinda like a pointer) to that thing (variable, etc).
+Module exports are not just normal assignments of values or references, as you're accustomed to with the `=` assignment operator. Actually, when you export something, you're exporting a binding (kinda like a pointer) to that thing (variable, etc.).
 
 That means that if you change the value inside your module of an variable you already exported a binding to, even if it's already been imported (see the next section), the imported binding will resolve to the current value.
+
+//TODO Kyle: "Within your module, this means that if you change the value of a variable you already exported a binding to, even..."?
 
 Consider:
 
@@ -1243,7 +1247,11 @@ awesome = 100;
 
 When this module is imported, regardless of before or after the `awesome = 100` setting, once that assignment has happened, the imported binding the resolves the `100` value, not `42`.
 
-That's because the binding is in essence a reference to, or a pointer to, the `awesome` variable itself, rather than a copy of its value. This is a mostly unprecedented concept for JS introduced with ES6 module bindings.
+//TODO Kyle: "When this module is imported, regardless of whether that's before..."?
+
+//TODO Kyle: Should it be "happened, the imported binding resolves" (delete "the")?  Or is something missing here?
+
+That's because the binding is, in essence, a reference to, or a pointer to, the `awesome` variable itself, rather than a copy of its value. This is a mostly unprecedented concept for JS introduced with ES6 module bindings.
 
 Though you can clearly use `export` multiple times inside a module's definition, ES6 definitely prefers the approach that a module has a single export, which is known as a *default export*. In the words of some members of the TC39 committee, you're "rewarded with simpler `import` syntax" if you follow that pattern, and conversely need more verbose syntax if you don't.
 
@@ -1273,6 +1281,8 @@ export { foo as default };
 
 In the first snippet, you are exporting a binding to the function expression value at that moment, *not* to the identifier `foo`. In other words, `export default ..` takes an expression. If later inside your module you assign `foo` to a different value, the module import still reveals the function originally exported, not the new value.
 
+//TODO Kyle: "If you later assign `foo` to a different value inside your module , the module..."?
+
 By the way, the first snippet could also have been written as:
 
 ```js
@@ -1281,7 +1291,7 @@ export default function foo(..) {
 }
 ```
 
-**Warning:** Even though the `function foo..` part here is technically a function expression, for the purposes of the internal scope of the module, it's treated like a function declaration, in that the `foo` name is bound in the module's top-level scope (often called "hoisting"). The same is true for `export default class Foo..`. However, while you *can* do `export var foo = ..`, you currently cannot do `export default var foo = ..` (or `let` or `const`), in a frustrating case of inconsistency. At the time of this writing, there's already discussion of adding that capability in soon, post-ES6, for consistency sake.
+**Warning:** Although the `function foo..` part here is technically a function expression, for the purposes of the internal scope of the module, it's treated like a function declaration, in that the `foo` name is bound in the module's top-level scope (often called "hoisting"). The same is true for `export default class Foo..`. However, while you *can* do `export var foo = ..`, you currently cannot do `export default var foo = ..` (or `let` or `const`), in a frustrating case of inconsistency. At the time of this writing, there's already discussion of adding that capability in soon, post-ES6, for consistency sake.
 
 Recall the second snippet again:
 
@@ -1294,6 +1304,8 @@ export { foo as default };
 ```
 
 In this version of the module export, the default export binding is actually to the `foo` identifier rather than its value, so you get the earlier described behavior that later changing `foo`'s value updates what is seen on the import binding side.
+
+//TODO Kyle: The last part of the sentence seems confuisng to me. How about "the previously described behavior (i.e., if you later change `foo`'s value, what is seen on the import-binding side will also be updated."? Or am I misunderstanding?
 
 Be very careful of this subtle gotcha in default export syntax, especially if your logic calls for export values to be updated. If you never plan to update a default export's value, `export default ..` is fine. If you do plan to update the value, you must use `export { .. as default }`. Either way, make sure to comment your code to explain your intent!
 
@@ -1331,7 +1343,7 @@ export function bar() { .. }
 export function baz() { .. }
 ```
 
-**Note:** In this previous snippet, I used the name `foo` for the function that `default` labels. That `foo` name however is ignored for the purposes of export -- `default` is actually the exported name. When you import this default binding, you can give it whatever name you want, as you'll see in the next section.
+**Note:** In this previous snippet, I used the name `foo` for the function that `default` labels. That `foo` name, however, is ignored for the purposes of export -- `default` is actually the exported name. When you import this default binding, you can give it whatever name you want, as you'll see in the next section.
 
 Alternatively, some will prefer:
 
@@ -1347,7 +1359,7 @@ The effects of mixing default and named exports will be more clear when we cover
 
 You can probably imagine how tedious that's going to be for consumers of your module if you have lots of named export bindings. There is a wildcard import form where you import all of a module's exports within a single namespace object, but there's no way to wildcard import to top-level bindings.
 
-Again, the ES6 module mechanism is intentionally designed to discourage modules with lots of exports; it's desired that such approaches be relatively a little more difficult, as a sort of social engineering to encourage simple module design in favor of large/complex module design.
+Again, the ES6 module mechanism is intentionally designed to discourage modules with lots of exports; relatively speaking, it's desired that such approaches be a little more difficult, as a sort of social engineering to encourage simple module design in favor of large/complex module design.
 
 I would probably recommend you not mix default export with named exports, especially if you have a large API and refactoring to separate modules isn't practical or desired. In that case, just use all named exports, and document that consumers of your module should probably use the `import * as ..` (namespace import, discussed in the next section) approach to bring the whole API in at once on a single namespace.
 
@@ -1365,7 +1377,7 @@ bar = "cool";
 
 When you import this module, the `default` and `bar` exports will be bound to the local variables `foo` and `bar`, meaning they will reveal the updated `10` and `"cool"` values. The values at time of export are irrelevant. The values at time of import are irrelevant. The bindings are live links, so all that matters is what the current value is when you access the binding.
 
-**Warning:** These bindings are not allowed to be 2-way. If you import a `foo` from a module, and try to change the value of your imported `foo` variable, an error will be thrown! We'll revisit that in the next section.
+**Warning:** Two-way bindings are not allowed. If you import a `foo` from a module, and try to change the value of your imported `foo` variable, an error will be thrown! We'll revisit that in the next section.
 
 You can also re-export another module's exports, such as:
 
@@ -1375,7 +1387,7 @@ export { foo as FOO, bar as BAR } from "baz";
 export * from "baz";
 ```
 
-Those forms are similar to just first importing from the `"baz"` module then listing its members explicitly for export from your module. However, in these forms, the members of the `"baz"` module are never imported to your module's local scope; they sort of pass-through untouched.
+Those forms are similar to just first importing from the `"baz"` module then listing its members explicitly for export from your module. However, in these forms, the members of the `"baz"` module are never imported to your module's local scope; they sort of pass through untouched.
 
 #### `import`ing API Members
 
@@ -1387,7 +1399,7 @@ If you want to import certain specific named members of a module's API into your
 import { foo, bar, baz } from "foo";
 ```
 
-**Warning:** The `{ .. }` syntax here may look like an object literal, or even an object destructuring syntax. However, it's form is special just for modules, so be careful not to confuse it with other `{ .. }` patterns elsewhere.
+**Warning:** The `{ .. }` syntax here may look like an object literal, or even an object destructuring syntax. However, its form is special just for modules, so be careful not to confuse it with other `{ .. }` patterns elsewhere.
 
 The `"foo"` string is called a *module specifier*. Because the whole goal is statically analyzable syntax, the module specifier must be a string literal; it cannot be a variable holding the string value.
 
@@ -1445,9 +1457,9 @@ One benefit, besides code being more explicit, is that narrow imports make stati
 
 Of course, that's just the standard position influenced by ES6 design philosophy; there's nothing that requires adherence to that approach.
 
-Many developers would be quick to point out that such approaches can be more tedious, requiring you to regularly revisit and update your `import` statement(s) each time you realize you need something else from a module. The tradeoff is in exchange for convenience.
+Many developers would be quick to point out that such approaches can be more tedious, requiring you to regularly revisit and update your `import` statement(s) each time you realize you need something else from a module. The trade-off is in exchange for convenience.
 
-In that light, the preference might be to import everything from the module into a single namespace, rather than importing individual members, each directly into the scope. Fortunately, the `import` statement has a syntax variation which can support this style of module consumption, called *namespace import*.
+In that light, the preference might be to import everything from the module into a single namespace, rather than importing individual members, each directly into the scope. Fortunately, the `import` statement has a syntax variation that can support this style of module consumption, called *namespace import*.
 
 Consider a `"foo"` module exported as:
 
@@ -1467,7 +1479,7 @@ foo.x;			// 42
 foo.baz();
 ```
 
-**Note:** The `* as ..` clause requires the `*` wildcard. That is, you cannot do something like `import { bar, x } as foo from "foo"` to bring in only part of the API but still bind to the `foo` namespace. I would have liked something like that, but for ES6 it's all or nothing with the namespace import.
+**Note:** The `* as ..` clause requires the `*` wildcard. In other words, you cannot do something like `import { bar, x } as foo from "foo"` to bring in only part of the API but still bind to the `foo` namespace. I would have liked something like that, but for ES6 it's all or nothing with the namespace import.
 
 If the module you're importing with `* as ..` has a default export, it is named `default` in the namespace specified. You can additionaly name the default import outside of the namespace binding, as a top-level identifier. Consider a `"world"` module exported as:
 
@@ -1505,11 +1517,11 @@ hello.baz = 42;		// (runtime) TypeError!
 
 Recall earlier in the "`export`ing API Members" section that we talked about how the `bar` and `baz` bindings are bound to the actual identifiers inside the `"world"` module. That means if the module changes those values, `hello.bar` and `hello.baz` now reference the updated values.
 
-But the immutable/read-only nature of your local imported bindings enforces that you cannot change them from the imported bindings, hence the `TypeError`s. That's pretty important, because without those protections, your changes would end up affecting all other consumers of the module (remember: singleton), which could create some very surprising side-effects!
+But the immutable/read-only nature of your local imported bindings enforces that you cannot change them from the imported bindings, hence the `TypeError`s. That's pretty important, because without those protections, your changes would end up affecting all other consumers of the module (remember: singleton), which could create some very surprising side effects!
 
-Moreover, though a module *can* change its API members from the inside, you should be very cautious of intentionally designing your modules in that fashion. ES6 modules are *supposed to be* static, so deviations from that principle should be rare and should be carefully and verbosely documented.
+Moreover, though a module *can* change its API members from the inside, you should be very cautious of intentionally designing your modules in that fashion. ES6 modules are *intended* to be static, so deviations from that principle should be rare and should be carefully and verbosely documented.
 
-**Warning:** There are module design philosophies where you actually intend to let a consumer change the value of a property on your API, or module APIs are designed to be "extended" by having other "plugins" add to the API namespace. As we just asserted, ES6 module APIs should be thought of and designed as static and unchangeable, which strongly restricts and discourages these alternate module design patterns. You can get around these limitations by exporting a plain object, which of course can then be changed at will. But be careful and think twice before going down that road.
+**Warning:** There are module design philosophies where you actually intend to let a consumer change the value of a property on your API, or module APIs are designed to be "extended" by having other "plug-ins" add to the API namespace. As we just asserted, ES6 module APIs should be thought of and designed as static and unchangeable, which strongly restricts and discourages these alternative module design patterns. You can get around these limitations by exporting a plain object, which of course can then be changed at will. But be careful and think twice before going down that road.
 
 Declarations that occur as a result of an `import` are "hoisted" (see the *Scope & Closures* title of this series). Consider:
 
@@ -1520,6 +1532,8 @@ import { foo } from "foo";
 ```
 
 `foo()` can run because not only did the static resolution of the `import ..` statement figure out what `foo` is during compilation, but it also "hoisted" the declaration to the top of the module's scope so it's available throughout the module.
+
+//TODO Kyle: This seems unclear to me as written.  Would the following suggestion be OK? "`foo()` can run not only because the static resolution of the `import ..` statement figured out what `foo` is during compilation, but also because it "hoisted" the declaration to the top of the module's scope, thus making it available throughout the module."?
 
 Finally, the most basic form of the `import` looks like this:
 
@@ -1584,7 +1598,7 @@ import bar from "bar";
 bar( 25 );				// 11.5
 ```
 
-By the time either the `foo(25)` or `bar(25)` calls are executed, all the analysis/compilation of all modules has completed. That means `foo(..)` internally knows directly about `bar(..)` and `bar(..)` interanlly knows directly about `foo(..)`.
+By the time either the `foo(25)` or `bar(25)` calls are executed, all the analysis/compilation of all modules has completed. That means `foo(..)` internally knows directly about `bar(..)` and `bar(..)` internally knows directly about `foo(..)`.
 
 If all we need is to interact with `foo(..)`, then we only need to import the `"foo"` module. Likewise with `bar(..)` and the `"bar"` module.
 
@@ -1598,23 +1612,25 @@ foo( 25 );				// 11
 bar( 25 );				// 11.5
 ```
 
-The static loading semantics of the `import` statement mean that a `"foo"` and `"bar"` which mutually depend on each other via `import` will ensure that both are loaded, parsed, and compiled before either of them runs. So their circular dependency is statically resolved and this works as you'd expect.
+The static loading semantics of the `import` statement mean that a `"foo"` and `"bar"` that mutually depend on each other via `import` will ensure that both are loaded, parsed, and compiled before either of them runs. So their circular dependency is statically resolved and this works as you'd expect.
 
 ### Module Loading
 
-We asserted at the beginning of this "Modules" section that the `import` statement uses a separate mechanism, provided by the hosting environment (browser, Node.js, etc.), to actually resolve the module specifier string into some useful instruction for finding and loading the desired module. That mechanism is the system *Module Loader*.
+We asserted at the beginning of this "Modules" section that the `import` statement uses a separate mechanism, provided by the hosting environment (browser, Node.js, etc.), to actually resolve the module specifier string into some useful instruction for finding and loading the desired module. That mechanism is the system *module loader*.
 
-The default module loader provided by the environment will interpret a module specifier as a URL if in the browser, and (generally) as a local file system path if on a server such as Node.js. The default behavior is to assume the loaded file is authored in the ES6 standard module format.
+The default module loader provided by the environment will interpret a module specifier as a URL if in the browser, and (generally) as a local filesystem path if on a server such as Node.js. The default behavior is to assume the loaded file is authored in the ES6 standard module format.
 
 Moreover, you will be able to load a module into the browser via an HTML tag, similar to how current script programs are loaded. At the time of this writing, it's not fully clear if this tag will be `<script type="module">` or `<module>`. ES6 doesn't control that decision, but discussions in the appropriate standards bodies are already well along in parallel of ES6.
 
 Whatever the tag looks like, you can be sure that under the covers it will use the default loader (or a customized one you've pre-specified -- see below).
 
+//TODO Kyle: " pre-specified, as we'll discuss in the next section)."?
+
 Just like the tag you'll use in markup, the module loader itself is not specified by ES6. It is a separate, parallel standard (http://whatwg.github.io/loader/) controlled currently by the WHATWG browser standards group.
 
 At the time of this writing, the following discussions reflect the expected API design, but of course things are subject to change.
 
-#### Loading Modules Outside Of Modules
+#### Loading Modules Outside of Modules
 
 One use for interacting directly with the module loader is if a non-module needs to load a module. Consider:
 
@@ -1632,7 +1648,7 @@ The `Reflect.Loader.import(..)` utility imports the entire module onto the named
 
 **Note:** The `Reflect.Loader.import(..)` utility returns a promise that is fulfilled once the module is ready. To import multiple modules, you can compose promises from multiple `Reflect.Loader.import(..)` calls using `Promise.all([ .. ])`. For more information about promises, see "Promises" in Chapter 4.
 
-You can also use `Reflect.Loader.import(..)` in a real module to dynamically/conditionally load a module, where `import` itself would not work. You might for instance choose to load a module containing a polyfill for some ES7+ feature if a feature test reveals it's not defined by the current engine.
+You can also use `Reflect.Loader.import(..)` in a real module to dynamically/conditionally load a module, where `import` itself would not work. You might, for instance, choose to load a module containing a polyfill for some ES7+ feature if a feature test reveals it's not defined by the current engine.
 
 For performance reasons, you'll want to avoid dynamic loading whenever possible, as it hampers the ability of the JS engine to fire off early fetches from its static analysis.
 
@@ -1641,6 +1657,8 @@ For performance reasons, you'll want to avoid dynamic loading whenever possible,
 Another use for directly interacting with the module loader is if you want to customize its behavior through configuration or even redefinition.
 
 At the time of this writing, there's a polyfill for the module loader API being developed (https://github.com/ModuleLoader/es6-module-loader). While details are scarce and highly subject to change, we can take a glimpse at what possibilities may eventually land.
+
+//TODO Kyle: "we can make an educated guess as to what possibilities"?
 
 The `Reflect.Loader.import(..)` call may support a second argument for specifying various options to customize the import/load task. For example:
 
@@ -1661,13 +1679,13 @@ From nearly the beginning of JavaScript, syntax and development patterns have al
 
 Of course, JS "classes" aren't nearly the same as traditional classical classes. The differences are well documented, so I won't belabor that point any further here.
 
-**Note:** To learn more about the patterns used in JS to fake "classes," and an alternate view of prototypes called "delegation," see the second half of the *this & Object Prototypes* title of this series.
+**Note:** To learn more about the patterns used in JS to fake "classes," and an alternative view of prototypes called "delegation," see the second half of the *this & Object Prototypes* title of this series.
 
 ### `class`
 
-Even though JS's prototype mechanism doesn't work like traditional classes, that doesn't stop the strong tide of demand on the language to extend the syntactic sugar so that expressing "classes" looks more like real classes. Enter the ES6 `class` keyword and its associated mechanism.
+Although JS's prototype mechanism doesn't work like traditional classes, that doesn't stop the strong tide of demand on the language to extend the syntactic sugar so that expressing "classes" looks more like real classes. Enter the ES6 `class` keyword and its associated mechanism.
 
-This feature is the result of a highly contentious and drawn out debate, and represents a smaller subset compromise from several strongly-opposed views on how to approach JS classes. Most developers who want full classes in JS will find parts of the new syntax quite inviting, but will find important bits still missing. Don't worry, though. TC39 is already working on additional features to augment classes in the post-ES6 timeframe.
+This feature is the result of a highly contentious and drawn-out debate, and represents a smaller subset compromise from several strongly opposed views on how to approach JS classes. Most developers who want full classes in JS will find parts of the new syntax quite inviting, but will find important bits still missing. Don't worry, though. TC39 is already working on additional features to augment classes in the post-ES6 timeframe.
 
 At the heart of the new ES6 class mechanism is the `class` keyword, which identifies a *block* where the contents define the members of a function's prototype. Consider:
 
@@ -1716,17 +1734,17 @@ f.gimmeXY();				// 75
 
 **Warning:** Though `class Foo` is much like `function Foo`, there are important differences. The `Foo(..)` call *must* be made with `new` -- a pre-ES6 approach of `Foo.call( obj )` will *not* work. Also, while `function Foo` is "hoisted" (see the *Scope & Closures* title of this series), `class Foo` is not; the `extends ..` clause specifies an expression that cannot be "hoisted." So, you must declare a `class` before you can instantiate it. Lastly, `class Foo` in the top global scope creates a lexical `Foo` identifier in that scope, but unlike `function Foo` does not create a global object property of that name.
 
-The established `instanceof` operator still works with ES6 classes, because `class` just creates a constructor function of the same name. However, ES6 introduces a way to customize how `instanceof` works, using `Symbol.hasInstance` (see "Well Known Symbols" in Chapter 7).
+The established `instanceof` operator still works with ES6 classes, because `class` just creates a constructor function of the same name. However, ES6 introduces a way to customize how `instanceof` works, using `Symbol.hasInstance` (see "Well-Known Symbols" in Chapter 7).
 
 Another way of thinking about `class`, which I find more convenient, is as a *macro* that is used to automatically populate a `prototype` object. Optionally, it also wires up the `[[Prototype]]` relationship if using `extends` (see the next section).
 
-An ES6 `class` isn't really an entity itself, but a meta concept that wraps around other concrete entities like functions and properties and ties them together.
+An ES6 `class` isn't really an entity itself, but a meta concept that wraps around other concrete entities, such as functions and properties, and ties them together.
 
 **Tip:** In addition to the declaration form, a `class` can also be an expression, as in: `var x = class Y { .. }`. This is primarily useful for passing a class definition (technically, the constructor itself) as a function argument or assigning it to an object property.
 
 ### `extends` and `super`
 
-ES6 classes also have syntax sugar for establishing the `[[Prototype]]` delegation link between two function prototypes -- commonly mislabeled "inheritance" or confusingly labeled "prototype inheritance" -- using the class-oriented familiar terminology `extends`:
+ES6 classes also have syntactic sugar for establishing the `[[Prototype]]` delegation link between two function prototypes -- commonly mislabeled "inheritance" or confusingly labeled "prototype inheritance" -- using the class-oriented familiar terminology `extends`:
 
 ```js
 class Bar extends Foo {
@@ -1748,7 +1766,7 @@ b.z;						// 25
 b.gimmeXYZ();				// 1875
 ```
 
-A significant new addition is `super`, which is actually something not directly possible (without some unfortunate hack tradeoffs). In the constructor, `super` automatically refers to the "parent constructor," which in the previous example is `Foo(..)`. In a method, it refers to the "parent object," such that you can then make a property/method access off it, such as `super.gimmeXY()`.
+A significant new addition is `super`, which is actually something not directly possible (without some unfortunate hack trade-offs). In the constructor, `super` automatically refers to the "parent constructor," which in the previous example is `Foo(..)`. In a method, it refers to the "parent object," such that you can then make a property/method access off it, such as `super.gimmeXY()`.
 
 `Bar extends Foo` of course means to link the `[[Prototype]]` of `Bar.prototype` to `Foo.prototype`. So, `super` in a method like `gimmeXYZ()` specifically means `Foo.prototype`, whereas `super` means `Foo` when used in the `Bar` constructor.
 
@@ -1810,9 +1828,9 @@ As you can see, the `this.id` reference was dynamically rebound so that `: a` is
 
 Because `b.foo()` references `super`, it is statically bound to the `ChildB`/`ParentB` heirarchy and cannot be used against the `ChildA`/`ParentA` heirarchy. There is no ES6 solution to this limitation.
 
-`super` seems to work intuitively if you have a static class heirarchy with no cross-polination. But in all fairness, one of the main benefits of doing `this`-aware coding is exactly that sort of flexibility. Simply, `class` + `super` requires you to avoid such techniques.
+`super` seems to work intuitively if you have a static class heirarchy with no cross-pollination. But in all fairness, one of the main benefits of doing `this`-aware coding is exactly that sort of flexibility. Simply, `class` + `super` requires you to avoid such techniques.
 
-The choice boils down to narrowing your object design to these static hierarchies -- `class`, `extends`, and `super` will be quite nice -- or dropping all attempts to "fake" classes and instead embrace dynamic and flexible classless-objects and `[[Prototype]]` delegation (see the *this & Object Prototypes* title of this series).
+The choice boils down to narrowing your object design to these static hierarchies -- `class`, `extends`, and `super` will be quite nice -- or dropping all attempts to "fake" classes and instead embrace dynamic and flexible, classles objects and `[[Prototype]]` delegation (see the *this & Object Prototypes* title of this series).
 
 #### Subclass Constructor
 
@@ -1886,6 +1904,8 @@ Prior to ES6, a fake "subclass" of `Array` using manual object creation and link
 
 Another common pre-ES6 "subclass" limitation is with the `Error` object, in creating custom error "subclasses." Genuine `Error` objects get special behavior by the browser that when created, they capture the special `stack` information, including the line number and file where the error is created. Pre-ES6 custom error "subclasses" get no such treatment, which severely limits their usefulness. ES6 to the rescue:
 
+//TODO Kyle: The sentence that starts "Genuine `Error` objects get special behavior by the browser that when created..." seems confusing. Possible to revise?
+
 ```js
 class Oops extends Error {
 	constructor(reason) {
@@ -1902,7 +1922,7 @@ The `ouch` custom error object in this previous snippet will behave like any oth
 
 ### `new.target`
 
-ES6 introduces a new concept called a "Meta Property," in the form of `new.target`. If that looks strange, it is; pairing a keyword with a `.` and a property name is definitely out of the ordinary pattern for JS.
+ES6 introduces a new concept called a *meta property*, in the form of `new.target`. If that looks strange, it is; pairing a keyword with a `.` and a property name is definitely an out-of-the-ordinary pattern for JS.
 
 `new.target` is a new "magical" value available in all functions, though in normal functions it will always be `undefined`. In any constructor, `new.target` always points at the constructor `new` directly invoked, even if the constructor is in a parent class and was delegated to by a `super(..)` call from a child constructor. Consider:
 
@@ -2016,11 +2036,11 @@ The parent class `Symbol.species` does `return this` to defer to any derived cla
 
 ## Review
 
-ES6 introduces several new features that aide in code organization:
+ES6 introduces several new features that aid in code organization:
 
 * Iterators provide sequential access to data or operations. They can be consumed by new language features like `for..of` and `...`.
 * Generators are locally pause/resume capable functions controlled by an iterator. They can be used to programmatically (and interactively, through `yield`/`next(..)` message passing) *generate* values to be consumed via iteration.
 * Modules allow private encapsulation of implementation details with a publicly exported API. Module definitions are file-based, singleton instances, and statically resolved at compile time.
 * Classes provide cleaner syntax around prototype-based coding. The addition of `super` also solves tricky issues with relative references in the `[[Prototype]]` chain.
 
-These new tools should be your first stop when trying to improve the architecture of your JS projects as you embrace ES6.
+These new tools should be your first stop when trying to improve the architecture of your JS projects by embracing ES6.
