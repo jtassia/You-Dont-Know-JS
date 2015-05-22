@@ -256,7 +256,7 @@ In pre-ES6&ndash;compliant environments, `foo()` would print `"2"` regardless of
 
 In ES6, that last line throws a `ReferenceError`.
 
-## Spread / Rest
+## Spread/Rest
 
 ES6 introduces a new `...` operator that's typically referred to as the *spread* or *rest* operator, depending on where/how it's used. Let's take a look:
 
@@ -1438,7 +1438,7 @@ var o = {
 
 We won't cover prototypes in detail here, so for more information, see the *this & Object Prototypes* title of this series.
 
-Sometimes it will be helpful to assign the `[[Prototype]]` of an object at the same time you're declaring its object literal. The following has been a non-standard extension in many JS engines for awhile, but is standardized as of ES6:
+Sometimes it will be helpful to assign the `[[Prototype]]` of an object at the same time you're declaring its object literal. The following has been a nonstandard extension in many JS engines for a while, but is standardized as of ES6:
 
 ```js
 var o1 = {
@@ -1455,7 +1455,7 @@ var o2 = {
 
 `__proto__` is controversial, to say the least. It's a decades-old proprietary extension to JS that is finally standardized, somewhat begrudgingly it seems, in ES6. Many developers feel it shouldn't ever be used. In fact, it's in "Annex B" of ES6, which is the section that lists things JS feels it has to standardize for compatibility reasons only.
 
-**Warning:** Though I'm narrowly endorsing `__proto__` as a key in an object literal definition, I definitely do not endorse using it in its object property form, like `o.__proto__`. That form is both a getter and setter (again for compat reasons), but there are definitely better options. See the *this & Object Prototypes* title of this series for more information.
+**Warning:** Though I'm narrowly endorsing `__proto__` as a key in an object literal definition, I definitely do not endorse using it in its object property form, like `o.__proto__`. That form is both a getter and setter (again for compatibility reasons), but there are definitely better options. See the *this & Object Prototypes* title of this series for more information.
 
 For setting the `[[Prototype]]` of an existing object, you can use the ES6 utility `Object.setPrototypeOf(..)`. Consider:
 
@@ -1471,7 +1471,9 @@ var o2 = {
 Object.setPrototypeOf( o2, o1 );
 ```
 
-**Note:** See Chapter 6 "`Object.setPrototypeOf(..)` Static Function" in Chapter 6 for more details on `Object.setPrototypeOf(..)`. Also see "`Object.assign(..)` Static Function" in Chapter 6 for another form that relates `o2` prototypically to `o1`.
+**Note:** We'll discuss `Object` again in Chapter 6.  "`Object.setPrototypeOf(..)` Static Function" provides additional details on `Object.setPrototypeOf(..)`. Also see "`Object.assign(..)` Static Function" for another form that relates `o2` prototypically to `o1`.
+
+//TODO Kyle: Edits in the preceding note OK?
 
 ### Object `super`
 
@@ -1509,13 +1511,13 @@ For complete details on `super`, see "Classes" in Chapter 3.
 
 At the very outset of this section, I'm going to have to call out the name of this ES6 feature as being awfully... misleading, depending on your experiences with what the word *template* means.
 
-Many developers think of templates as being reusable renderable pieces of text, such as the capability provided by most template engines (Mustache, Handlebars, etc.). ES6's use of the word Template would imply something similar, like a way to declare inline template literals that can be re-rendered. However, that's not at all the right way to think about this feature.
+Many developers think of templates as being reusable renderable pieces of text, such as the capability provided by most template engines (Mustache, Handlebars, etc.). ES6's use of the word *template* would imply something similar, like a way to declare inline template literals that can be re-rendered. However, that's not at all the right way to think about this feature.
 
-So, before we go on, I'm renaming to what it should have been called: *Interpolated String Literals*.
+So, before we go on, I'm renaming to what it should have been called: *interpolated string literals*.
 
 You're already well aware of declaring string literals with `"` or `'` delimiters, and you also know that these are not *smart strings* (as some languages have), where the contents would be parsed for interpolation expressions.
 
-However, ES6 introduces a new type of string literal, using the `` ` `` back-tick as the delimiter. These string literals do allow basic string interpolation expressions to be embedded, which are then automatically parsed and evaluated.
+However, ES6 introduces a new type of string literal, using the `` ` `` backtick as the delimiter. These string literals do allow basic string interpolation expressions to be embedded, which are then automatically parsed and evaluated.
 
 Here's the old pre-ES6 way:
 
@@ -1559,7 +1561,7 @@ console.log( text );
 // country!
 ```
 
-As you can see, the new-lines we inserted into the string literal were preserved and kept in the string value, just as we'd hope.
+As you can see, the newlines we inserted into the string literal were preserved and kept in the string value, just as we'd hope.
 
 ### Interpolated Expressions
 
@@ -1587,7 +1589,7 @@ console.log( text );
 
 Here, the inner `` `${who}s` `` interpolated string literal was a little bit nicer convenience for us when combining the `who` variable with the `"s"` string, as opposed to `who + "s"`. There will be cases that nesting interpolated string literals is helpful, but be wary if you find yourself doing that kind of thing often, or if you find yourself nesting several levels deep.
 
-Odds are, your string value production could benefit from some abstractions if that's the case.
+If that's the case, the odds are good that your string value production could benefit from some abstractions.
 
 #### Expression Scope
 
@@ -1615,7 +1617,7 @@ At the moment the `` `..` `` string literal is expressed, inside the `bar()` fun
 
 ### Tagged Template Literals
 
-Again, renaming the feature for sanity sake: *Tagged String Literals*.
+Again, renaming the feature for sanity sake: *tagged string literals*.
 
 To be honest, this is one of the cooler tricks that ES6 offers. It may seem a little strange, and perhaps not all that generally practical at first. But once you've spent some time with it, tagged string literals may just surprise you in their usefulness.
 
@@ -1657,7 +1659,7 @@ But what gets passed to the `foo(..)` function when invoked as a tag for a strin
 
 The first argument -- we called it `strings` -- is an array of all the plain strings (the stuff between any interpolated expressions). We get two values in the `strings` array: `"Everything is "` and `"!"`.
 
-For convenience sake in our example, we then gather up all subsequent arguments into an array called `values` using the `...` gather/rest operator (see the "Spread / Rest" section earlier in this chapter), though you could of course have left them as individual named parameters following the `strings` parameter.
+For convenience sake in our example, we then gather up all subsequent arguments into an array called `values` using the `...` gather/rest operator (see the "Spread/Rest" section earlier in this chapter), though you could of course have left them as individual named parameters following the `strings` parameter.
 
 The argument(s) gathered into our `values` array are the results of the already-evaluated interpolation expressions found in the string literal. So obviously the only element in `values` in our example is `"awesome"`.
 
@@ -1683,7 +1685,9 @@ console.log( text );			// Everything is awesome!
 
 In this snippet, `tag(..)` is a passthru operation, in that it doesn't perform any special modifications, but just uses `reduce(..)` to splice/interleave `strings` and `values` together the same way an untagged string literal would have done.
 
-So what are some practical uses? There are many advanced ones that are beyond our scope to discuss here. But here's a simple idea that formats numbers as US dollars (sort of like basic localization):
+//TODO Kyle: OK to make it "pass-through" here?
+
+So what are some practical uses? There are many advanced ones that are beyond our scope to discuss here. But here's a simple idea that formats numbers as U.S. dollars (sort of like basic localization):
 
 ```js
 function dollabillsyall(strings, ...values) {
@@ -1720,9 +1724,13 @@ console.log( text );
 
 If a `number` value is encountered in the `values` array, we put `"$"` in front of it and format it to two decimal places with `toFixed(2)`. Otherwise, we let the value passthru untouched.
 
+//TODO Kyle: OK to make it "pass through" here?
+
 #### Raw Strings
 
 In the previous snippets, our tag functions receive a first argument we called `strings`, which is an array. But there's an additional bit of data included: the raw unprocessed versions of all the strings. You can access those raw string values using the `.raw` property, like this:
+
+//TODO Kyle: OK to make it "our tag functions receive the first argument " (replace "a" with "the")?  Or is there something missing here?
 
 ```js
 function showraw(strings, ...values) {
@@ -1735,7 +1743,7 @@ showraw`Hello\nWorld`;
 // [ "Hello\\nWorld" ]
 ```
 
-As you can see, the raw version of the string preserves the escaped `\n` sequence, while the processed version of the string treats it like an unescaped real new-line.
+As you can see, the raw version of the string preserves the escaped `\n` sequence, while the processed version of the string treats it like an unescaped real newline.
 
 ES6 comes with a built-in function that can be used as a string literal tag: `String.raw(..)`. It simply passes through the raw versions of the `strings`:
 
@@ -1752,7 +1760,7 @@ Other uses for string literal tags included special processing for international
 
 ## Arrow Functions
 
-We've touched on `this` binding complications with functions earlier in this chapter, and they're covered at length in the *this & Object Prototypes* title of this series. It's important to understand the frustrations that `this` based programming with normal functions brings, because that is the primary motivation for the new ES6 `=>` arrow function feature.
+We've touched on `this` binding complications with functions earlier in this chapter, and they're covered at length in the *this & Object Prototypes* title of this series. It's important to understand the frustrations that `this`-based programming with normal functions brings, because that is the primary motivation for the new ES6 `=>` arrow function feature.
 
 Let's first illustrate what an arrow function looks like, as compared to normal functions:
 
@@ -1787,11 +1795,11 @@ var f3 = (x,y) => {
 
 Arrow functions are *always* function expressions; there is no arrow function declaration. It also should be clear that they are anonymous function expressions -- they have no named reference for the purposes of recursion or event binding/unbinding -- though "Function Names" in Chapter 7 will describe ES6's function name inference rules for debugging purposes.
 
-**Note:** All the capabilities of normal function parameters are available to arrow functions, including default values, destructuring, rest parameters, etc.
+**Note:** All the capabilities of normal function parameters are available to arrow functions, including default values, destructuring, rest parameters, and so on.
 
 Arrow functions have a nice, shorter syntax, which makes them on the surface very attractive for writing terser code. Indeed, nearly all literature on ES6 (other than the titles in this series) seems to immediately and exclusively adopt the arrow function as "the new function."
 
-It is telling that nearly all examples in discussion of arrow functions are short single statement utilities, such as those passed as callbacks to various utilities, such as:
+It is telling that nearly all examples in discussion of arrow functions are short single statement utilities, such as those passed as callbacks to various utilities. For example:
 
 ```js
 var a = [1,2,3,4,5];
@@ -1803,9 +1811,11 @@ console.log( a );				// [2,4,6,8,10]
 
 In those cases, where you have such inline function expressions, and they fit the pattern of computing a quick calculation in a single statement and returning that result, arrow functions indeed look to be an attractive and lightweight alternative to the more verbose `function` keyword and syntax.
 
-Most people tend to *ooo and ahhh* at nice terse examples like that, as I imagine you just did!
+Most people tend to *ooh and aah* at nice terse examples like that, as I imagine you just did!
 
-However, I would caution you that it would seem to me somewhat a misapplication of this feature to use arrow function syntax with otherwise normal, multi-statement functions, especially those which would otherwise be naturally expressed as function declarations.
+//TODO Kyle: Changed to ooh and aah, per Webster's (http://www.merriam-webster.com/dictionary/aah).
+
+However, I would caution you that it would seem to me somewhat a misapplication of this feature to use arrow function syntax with otherwise normal, multistatement functions, especially those that would otherwise be naturally expressed as function declarations.
 
 Recall the `dollabillyall(..)` string literal tag function from earlier in this chapter -- let's change it to use `=>` syntax:
 
@@ -1827,21 +1837,21 @@ var dollabillsyall = (strings, ...values) =>
 	}, "" );
 ```
 
-In this example, is the removal of `function`, `return`, and some `{ .. }`, and then the insertion of `=>` and a `var` -- these were the only modifications I made -- a significant improvement in the readability of the code? Meh.
+In this example,  the only modifications I made were the removal of `function`, `return`, and some `{ .. }`, and then the insertion of `=>` and a `var`. Is this a significant improvement in the readability of the code? Meh.
 
 I'd actually argue that the lack of `return` and outer `{ .. }` partially obscures the fact that the `reduce(..)` call is the only statement in the `dollabillsyall(..)` function and that its result is the intended result of the call. Also, the trained eye that is so used to hunting for the word `function` in code to find scope boundaries now needs to look for the `=>` marker, which can definitely be harder to find in the thick of the code.
 
-While not a hard and fast rule, I'd say that the readability gains from `=>` arrow function conversion are inversely proportional to the length of the function being converted. The longer the function, the less `=>` helps; the shorter the function, the more `=>` can shine.
+While not a hard-and-fast rule, I'd say that the readability gains from `=>` arrow function conversion are inversely proportional to the length of the function being converted. The longer the function, the less `=>` helps; the shorter the function, the more `=>` can shine.
 
-I think it's probably more sensible and reasonable to adopt `=>` for the places in code where you do need short inline function expressions, but leave your normal-length main functions as-is.
+I think it's probably more sensible and reasonable to adopt `=>` for the places in code where you do need short inline function expressions, but leave your normal-length main functions as is.
 
 ### Not Just Shorter Syntax, But `this`
 
 Most of the popular attention toward `=>` has been on saving those precious keystrokes by dropping `function`, `return`, and `{ .. }` from your code.
 
-But, there's a big detail we've skipped over so far. I said at the beginning of the section that `=>` functions are closely related to `this` binding behavior. In fact, `=>` arrow functions are *primarily designed* to alter `this` behavior in a specific way, solving a particular and common pain point with `this`-aware coding.
+But there's a big detail we've skipped over so far. I said at the beginning of the section that `=>` functions are closely related to `this` binding behavior. In fact, `=>` arrow functions are *primarily designed* to alter `this` behavior in a specific way, solving a particular and common pain point with `this`-aware coding.
 
-The saving of keystrokes is a red herring, a misleading side show at best.
+The saving of keystrokes is a red herring, a misleading sideshow at best.
 
 Let's revisit another example from earlier in this chapter:
 
@@ -1859,6 +1869,8 @@ var controller = {
 ```
 
 We used the `var self = this` hack, and then referenced `self.makeRequest(..)`, which inside the callback function we're passing to `addEventListener(..)`, the `this` binding will not be the same as it is in `makeRequest(..)` itself. In other words, because `this` bindings are dynamic, we fall back to the predictability of lexical scope via the `self` variable.
+
+//TODO Kyle: The first sentence seems a bit unclear ("We used the `var self = this` hack..."). Possible to revise?
 
 Herein we finally can see the primary design characteristic of `=>` arrow functions. Inside arrow functions, the `this` binding is not dynamic, but is instead lexical. In the previous snippet, if we used an arrow function for the callback, `this` will be predictably what we wanted it to be.
 
@@ -1899,7 +1911,7 @@ var controller = {
 controller.makeRequest(..);
 ```
 
-Even though we invoke as `controller.makeRequest(..)`, the `this.helper` reference fails, because `this` here doesn't point to `controller` as it normally would. Where does it point? It lexically inherits `this` from the surrounding scope. In this previous snippet, that's the global scope, where `this` points to the global object. Ugh.
+Although we invoke as `controller.makeRequest(..)`, the `this.helper` reference fails, because `this` here doesn't point to `controller` as it normally would. Where does it point? It lexically inherits `this` from the surrounding scope. In this previous snippet, that's the global scope, where `this` points to the global object. Ugh.
 
 In addition to lexical `this`, arrow functions also have lexical `arguments` -- they don't have their own `arguments` array but instead inherit from their parent -- as well as lexical `super` and `new.target` (see "Classes" in Chapter 3).
 
@@ -1908,7 +1920,7 @@ So now we can conclude a more nuanced set of rules for when `=>` is appropriate 
 * If you have a short, single-statement inline function expression, where the only statement is a `return` of some computed value, *and* that function doesn't already make a `this` reference inside it, *and* there's no self-reference (recursion, event binding/unbinding), *and* you don't reasonably expect the function to ever be that way, you can probably safely refactor it to be an `=>` arrow function.
 * If you have an inner function expression that's relying on a `var self = this` hack or a `.bind(this)` call on it in the enclosing function to ensure proper `this` binding, that inner function expression can probably safely become an `=>` arrow function.
 * If you have an inner function expression that's relying on something like `var args = Array.prototype.slice.call(arguments)` in the enclosing function to make a lexical copy of `arguments`, that inner function expression can probably safely become an `=>` arrow function.
-* For everything else -- normal function declarations, longer multi-statment function expressions, functions which need a lexical name identifier self-reference (recursion, etc.), and any other function which doesn't fit the previous characteristics -- you should probably avoid `=>` function syntax.
+* For everything else -- normal function declarations, longer multistatment function expressions, functions that need a lexical name identifier self-reference (recursion, etc.), and any other function that doesn't fit the previous characteristics -- you should probably avoid `=>` function syntax.
 
 Bottom line: `=>` is about lexical binding of `this`, `arguments`, and `super`. These are intentional features designed to fix some common problems, not bugs, quirks, or mistakes in ES6.
 
@@ -1971,14 +1983,14 @@ for (var val, ret, it = a[Symbol.iterator]();
 // "a" "b" "c" "d" "e"
 ```
 
-Under the covers, the `for..of` loop asks the iterable for an iterator (using the built-in `Symbol.iterator` -- see "Well Known Symbols" in Chapter 7), then it repeatedly calls the iterator and assigns its produced value to the loop iteration variable.
+Under the covers, the `for..of` loop asks the iterable for an iterator (using the built-in `Symbol.iterator`; see "Well-Known Symbols" in Chapter 7), then it repeatedly calls the iterator and assigns its produced value to the loop iteration variable.
 
 Standard built-in values in JavaScript that are by default iterables (or provide them) include:
 
-* arrays
-* strings
-* generators (see Chapter 3)
-* collections / TypedArrays (see Chapter 5)
+* Arrays
+* Strings
+* Generators (see Chapter 3)
+* Collections / TypedArrays (see Chapter 5)
 
 **Warning:** Plain objects are not by default suitable for `for..of` looping. That's because they don't have a default iterator, which is intentional, not a mistake. However, we won't go any further into those nuanced reasonings here. In "Iterators" in Chapter 3, we'll see how to define iterators for our own objects, which lets `for..of` loop over any object to get a set of values we define.
 
@@ -2015,11 +2027,14 @@ for ({x: o.a} of [ {x: 1}, {x: 2}, {x: 3} ]) {
 
 Let's face it: regular expressions haven't changed much in JS in a long time. So it's a great thing that they've finally learned a couple of new tricks in ES6. We'll briefly cover the additions here, but regular expressions in general is a topic so dense that it really needs dedicated chapters/books (of which there are many!).
 
+//TODO Kyle: I'm not sure precisely what you're saying in the last sentence.  OK to make the following change?  
+"...but the overall topic of regular expressions is so dense that you'll need to turn to chapters/books dedicated to it (of which there are many!) if you need a refresher."
+
 ### Unicode Flag
 
 We'll cover the topic of Unicode in more detail in "Unicode" later in this chapter. Here, we'll just look briefly at the new `u` flag for ES6+ regular expressions, which turns on Unicode matching for that expression.
 
-JavaScript strings are typically interpreted as sequences of 16-bit characters, which correspond to the characters in the *Basic Multilingual Plane* (*BMP*) (http://en.wikipedia.org/wiki/Plane_%28Unicode%29). But there are many UTF-16 characters that fall outside this range, and so strings may have these multibyte characters in them.
+JavaScript strings are typically interpreted as sequences of 16-bit characters, which correspond to the characters in the *Basic Multilingual Plane (BMP)* (http://en.wikipedia.org/wiki/Plane_%28Unicode%29). But there are many UTF-16 characters that fall outside this range, and so strings may have these multibyte characters in them.
 
 Prior to ES6, regular expressions could only match based on BMP characters, which means that those extended characters were treated as two separate characters for matching purposes. This is often not ideal.
 
@@ -2027,7 +2042,7 @@ So, as of ES6, the `u` flag tells a regular expression to process a string with 
 
 **Warning:** Despite the name implication, "UTF-16" doesn't strictly mean 16 bits. Modern Unicode uses 21 bits, and standards like UTF-8 and UTF-16 refer roughly to how many bits are used in the representation of a character.
 
-An example (straight from the ES6 specification): 𝄞(the musical symbol G-clef) is Unicode point U+1D11E (0x1D11E).
+An example (straight from the ES6 specification): 𝄞 (the musical symbol G-clef) is Unicode point U+1D11E (0x1D11E).
 
 If this character appears in a regular expression pattern (like `/𝄞/`), the standard BMP interpretation would be that it's two separate characters (0xD834 and 0xDD1E) to match with. But the new ES6 Unicode-aware mode means that `/𝄞/u` (or the escaped Unicode form `/\u{1D11E}/u`) will match `"𝄞"` in a string as a single matched character.
 
@@ -2044,11 +2059,11 @@ The length of the match is what matters. For example:
 /^.-clef/u.test( "𝄞-clef" );		// true
 ```
 
-The `^.-clef` in the pattern says to match only a single character at the beginning before the normal `"-clef"` text. In standard BMP mode, the match fails (2 characters), but with `u` Unicode mode flagged on, the match succeeds (1 character).
+The `^.-clef` in the pattern says to match only a single character at the beginning before the normal `"-clef"` text. In standard BMP mode, the match fails (two characters), but with `u` Unicode mode flagged on, the match succeeds (one character).
 
-It's also important to note that `u` makes quantifiers like `+` and `*` apply to the entire Unicode code point as a single character, not just the *lower surrogate* (aka rightmost halve of the symbol) of the character. The same goes for Unicode characters appearing in character classes, like `/[💩-💫]/u`.
+It's also important to note that `u` makes quantifiers like `+` and `*` apply to the entire Unicode code point as a single character, not just the *lower surrogate* (aka rightmost half of the symbol) of the character. The same goes for Unicode characters appearing in character classes, like `/[💩-💫]/u`.
 
-**Note:** There's plenty more nitty gritty details about `u` behavior in regular expressions, which Mathias Bynens (https://twitter.com/mathias) has written extensively about (https://mathiasbynens.be/notes/es6-unicode-regex).
+**Note:** There's plenty more nitty-gritty details about `u` behavior in regular expressions, which Mathias Bynens (https://twitter.com/mathias) has written extensively about (https://mathiasbynens.be/notes/es6-unicode-regex).
 
 ### Sticky Flag
 
@@ -2098,7 +2113,7 @@ And so our new observations about sticky mode:
 * `test(..)` uses `lastIndex` as the exact and only position in `str` to look to make a match. There is no moving ahead to look for the match -- it's either there at the `lastIndex` position or not.
 * If a match is made, `test(..)` updates `lastIndex` to point to the character immediately following the match. If a match fails, `test(..)` resets `lastIndex` back to `0`.
 
-Normal non-sticky patterns that aren't otherwise `^`-rooted to the start-of-input are free to move ahead in the input string looking for a match. But sticky mode restricts the pattern to matching just at  the position of `lastIndex`.
+Normal non-sticky patterns that aren't otherwise `^`-rooted to the start-of-input are free to move ahead in the input string looking for a match. But sticky mode restricts the pattern to matching just at the position of `lastIndex`.
 
 As I suggested at the beginning of this section, another way of looking at this is that `y` implies a virtual anchor at the beginning of the pattern that is relative (aka constrains the start of the match) to exactly the `lastIndex` position.
 
@@ -2108,7 +2123,7 @@ As I suggested at the beginning of this section, another way of looking at this 
 
 It may seem strangely limiting that to use `y` for repeated matches, you have to manually ensure `lastIndex` is in the exact right position, as it has no move-ahead capability for matching.
 
-One possible scenario is if you knew that the match you care about is always going to be at a position that's a multiple of a number, like `0`, `10`, `20`, etc., you can just construct a limited pattern matching what you care about, but then manually set `lastIndex` each time before match to those fixed positions.
+Here's one possible scenario: if you know that the match you care about is always going to be at a position that's a multiple of a number (e.g., `0`, `10`, `20`, etc.), you can just construct a limited pattern matching what you care about, but then manually set `lastIndex` each time before match to those fixed positions.
 
 Consider:
 
@@ -2128,6 +2143,8 @@ str.match( re );		// ["fad"]
 However, if you're parsing a string that isn't formatted in fixed positions like that, figuring out what to set `lastIndex` to before each match is likely going to be untenable.
 
 There's a saving nuance to consider here. `y` requires that `lastIndex` be in the exact position for your a match to occur, yes. But it doesn't strictly require that *you* manually set `lastIndex`.
+
+//TODO Kyle: "for your match to occur." (delete "a" and ", yes")?
 
 Instead, you can construct your expressions in such a way that they capture in each main match everything before and after the thing you care about, up to right before the next thing you'll care to match.
 
@@ -2150,13 +2167,15 @@ re.lastIndex;			// 14 -- correct position!
 str.match( re );		// ["3. baz", "baz"]
 ```
 
-This works because I knew something ahead of time about the structure of the input string: there is always a numeral prefix like `"1. "` before the desired match (`"foo"`, etc.), and either a space after or the end of the string (`$` anchor). So the regular expression I constructed captures all of that in each main match, and then I use a matching group `( )` so that the stuff I really care about it separated out for convenience.
+This works because I knew something ahead of time about the structure of the input string: there is always a numeral prefix like `"1. "` before the desired match (`"foo"`, etc.), and either a space after or the end of the string (`$` anchor). So the regular expression I constructed captures all of that in each main match, and then I use a matching group `( )` so that the stuff I really care about is separated out for convenience.
+
+//TODO Kyle: "and either a space or the end of the string (`$` anchor) after." (move "after" to end of sentence)?
 
 After the first match (`"1. foo "`), the `lastIndex` is `7`, which is already the position needed to start the next match, for `"2. bar "`, and so on.
 
 If you're going to use `y` sticky mode for repeated matches, you'll probably want to look for opportunities to have `lastIndex` automatically positioned as we've just demonstrated.
 
-#### Sticky versus Global
+#### Sticky Versus Global
 
 Some readers may be aware that you can emulate something like this `lastIndex`-relative matching with the `g` global match flag and the `exec(..)` method, as so:
 
@@ -2269,7 +2288,7 @@ Prior to ES6, the `re3` construction would throw an error, but as of ES6 you can
 
 ## Number Literal Extensions
 
-Prior to ES5, number literals looked like the following -- the octal form was not officially specified, only allowed as an extension that browsers had come to de fact agreement on:
+Prior to ES5, number literals looked like the following -- the octal form was not officially specified, only allowed as an extension that browsers had come to de facto agreement on:
 
 ```js
 var dec = 42,
@@ -2279,7 +2298,7 @@ var dec = 42,
 
 **Note:** Though you are specifying a number in different bases, the number's mathematic value is what is stored, and the default output interpretation is always base-10. The three variables in the previous snippet all have the `42` value stored in them.
 
-To further illustrate that `052` was a non-standard form extension, consider:
+To further illustrate that `052` was a nonstandard form extension, consider:
 
 ```js
 Number( "42" );				// 42
@@ -2289,7 +2308,7 @@ Number( "0x2a" );			// 42
 
 ES5 continued to permit the browser-extended octal form (including such inconsistencies), except that in strict mode, the octal literal (`052`) form is disallowed. This restriction was done mainly because many developers had the habit (from other languages) of seemingly innocuously prefixing otherwise base-10 numbers with `0`'s for code alignment purposes, and then running into the accidental fact that they'd changed the number value entirely!
 
-ES6 continues the legacy of changes/variations to how number literals outside base-10 numbers can be represented. There's now an official octal form, an amended hexadecimal form, and a brand new binary form. For web compatibility reasons, the old octal `052` form will continue to be legal (though unspecified) in non-strict mode, but should really never be used anymore.
+ES6 continues the legacy of changes/variations to how number literals outside base-10 numbers can be represented. There's now an official octal form, an amended hexadecimal form, and a brand-new binary form. For web compatibility reasons, the old octal `052` form will continue to be legal (though unspecified) in non-strict mode, but should really never be used anymore.
 
 Here are the new ES6 number literal forms:
 
@@ -2311,7 +2330,7 @@ Number( "0x2a" );		// 42
 Number( "0b101010" );	// 42
 ```
 
-Though not strictly new to ES6, it's a little known fact that you can actually go the opposite direction of conversion (well, sort of):
+Though not strictly new to ES6, it's a little-known fact that you can actually go the opposite direction of conversion (well, sort of):
 
 ```js
 var a = 42;
@@ -2326,11 +2345,11 @@ In fact, you can represent a number this way in any base from `2` to `36`, thoug
 
 ## Unicode
 
-Let me just say that this section is not an exhaustive everything-you-ever-wanted-to-know-about-Unicode resource. I want to cover what you need to know that's *changing* for Unicode in ES6, but we won't go much deeper than that. Mathias Bynens (http://twitter.com/mathias) has written/spoken extensively and brilliantly about JS and Unicode (https://mathiasbynens.be/notes/javascript-unicode) (http://fluentconf.com/javascript-html-2015/public/content/2015/02/18-javascript-loves-unicode).
+Let me just say that this section is not an exhaustive everything-you-ever-wanted-to-know-about-Unicode resource. I want to cover what you need to know that's *changing* for Unicode in ES6, but we won't go much deeper than that. Mathias Bynens (http://twitter.com/mathias) has written/spoken extensively and brilliantly about JS and Unicode (see https://mathiasbynens.be/notes/javascript-unicode and http://fluentconf.com/javascript-html-2015/public/content/2015/02/18-javascript-loves-unicode).
 
-The Unicode characters that range from `0x0000` to `0xFFFF` contain all the standard printed characters (in various languages) that you're likely to have seen or interacted with. This group of characters is called the *Basic Multilingual Plane* (*BMP*). The BMP even contains fun symbols like this cool snowman ☃ (U+2603).
+The Unicode characters that range from `0x0000` to `0xFFFF` contain all the standard printed characters (in various languages) that you're likely to have seen or interacted with. This group of characters is called the *Basic Multilingual Plane (BMP)*. The BMP even contains fun symbols like this cool snowman: ☃ (U+2603).
 
-There are lots of other extended Unicode characters beyond this BMP set, which range up to `0x10FFFF`. These symbols are often referred to as *astral* symbols, as that's the name given to set of 16 *planes* (e.g., layers/groupings) of characters beyond the BMP. Examples of astral symbols include 𝄞 (U+1D11E) and 💩 (U+1F4A9).
+There are lots of other extended Unicode characters beyond this BMP set, which range up to `0x10FFFF`. These symbols are often referred to as *astral* symbols, as that's the name given to the set of 16 *planes* (e.g., layers/groupings) of characters beyond the BMP. Examples of astral symbols include 𝄞 (U+1D11E) and 💩 (U+1F4A9).
 
 Prior to ES6, JavaScript strings could specify Unicode characters using Unicode escaping, such as:
 
@@ -2339,7 +2358,7 @@ var snowman = "\u2603";
 console.log( snowman );			// "☃"
 ```
 
-However, the `\uXXXX` Unicode escaping only supports four hexadecimal characters, so you can only represent the BMP set of characters in this way. To represent an astral character using Unicode escaping prior to ES6, you need to use a *surrogate pair* -- basically two specially calculated Unicode-escaped characters side-by-side, which JS interprets together as a single astral character:
+However, the `\uXXXX` Unicode escaping only supports four hexadecimal characters, so you can only represent the BMP set of characters in this way. To represent an astral character using Unicode escaping prior to ES6, you need to use a *surrogate pair* -- basically two specially calculated Unicode-escaped characters side by side, which JS interprets together as a single astral character:
 
 ```js
 var gclef = "\uD834\uDD1E";
@@ -2367,7 +2386,7 @@ var gclef = "𝄞";
 gclef.length;					// 2
 ```
 
-So, how do we accurately calculate the length of such a string? In this scenario, this trick will work:
+So, how do we accurately calculate the length of such a string? In this scenario, the following trick will work:
 
 ```js
 var gclef = "𝄞";
@@ -2380,7 +2399,7 @@ Recall from the "`for..of` Loops" section earlier in this chapter that ES6 strin
 
 **Warning:** It should be noted that constructing and exhausting an iterator just to get the length of a string is quite expensive on performance, relatively speaking, compared to what a theoretically optimized native utility/property would do.
 
-Unfortunately, the full answer is not as simple or straightforward. In addition to the surrogate pairs (which the string iterator takes care of), there are special Unicode code points which behave in other special ways, which is much harder to account for. For example, there's a set of code points which modify the previous adjacent character, known as the *Combining Diacritical Marks*.
+Unfortunately, the full answer is not as simple or straightforward. In addition to the surrogate pairs (which the string iterator takes care of), there are special Unicode code points that behave in other special ways, which is much harder to account for. For example, there's a set of code points that modify the previous adjacent character, known as *combining diacritical marks*.
 
 Consider these two string outputs:
 
@@ -2442,6 +2461,8 @@ s1.normalize().length;			// 2
 
 The further you go down this rabbit hole, the more you realize that there it's difficult to get one precise definition for "length." What we see visually rendered as a single character -- more precisely called a *grapheme* -- doesn't always strictly relate to a single "character" in the program processing sense.
 
+//TODO Kyle: "you realize that it's difficult" (delete ("there")? Or is something missing here?
+
 **Tip:** If you want to see just how deep this rabbit hole goes, check out the "Grapheme Cluster Boundaries" algorithm (http://www.Unicode.org/reports/tr29/#Grapheme_Cluster_Boundaries).
 
 ### Character Positioning
@@ -2479,7 +2500,7 @@ var s1 = "abc\u0301d",
 [...s3.normalize()][2];			// "𝒞"
 ```
 
-**Warning:** Reminder of an earlier warning: constructing and exhausting an iterator each time you want to get at a single character is... very not ideal performance wise. Let's hope we get a built-in and optimized utility for this soon, post-ES6.
+**Warning:** Reminder of an earlier warning: constructing and exhausting an iterator each time you want to get at a single character is... very not ideal, performance wise. Let's hope we get a built-in and optimized utility for this soon, post-ES6.
 
 What about a Unicode-aware version of the `charCodeAt(..)` utility? ES6 gives us `codePointAt(..)`:
 
@@ -2525,7 +2546,9 @@ String.fromCodePoint( s3.normalize().codePointAt( 2 ) );
 
 There's quite a few other string methods we haven't addressed here, including `toUpperCase()`, `toLowerCase()`, `substring(..)`, `indexOf(..)`, `slice(..)`, and a dozen others. None of these have been changed or augmented for full Unicode awareness, so you should be very careful -- probably just avoid them! -- on strings with astral symbols contained.
 
-There are also several string methods which use regular expressions for their behavior, like `replace(..)` and `match(..)`. Thankfully, ES6 brings Unicode awareness to regular expressions, as we covered in "Unicode Flag" earlier in this chapter.
+//TODO Kyle: OK to change the last part of the preceding sentence to "when working with strings containing astral symbols."?
+
+There are also several string methods that use regular expressions for their behavior, like `replace(..)` and `match(..)`. Thankfully, ES6 brings Unicode awareness to regular expressions, as we covered in "Unicode Flag" earlier in this chapter.
 
 OK, there we have it! JavaScript's Unicode string support is significantly better over pre-ES6 (though still not perfect) with the various additions we've just covered.
 
@@ -2547,15 +2570,15 @@ var \u{2B400} = 42;
 // same as: var 𫐀 = 42;
 ```
 
-There's a complex set of rules around exactly which unicode characters are allowed. Furthermore, some are allowed only if they're not the first character of the identifier name.
+There's a complex set of rules around exactly which Unicode characters are allowed. Furthermore, some are allowed only if they're not the first character of the identifier name.
 
-**Note:** Mathias Bynens has a great post (https://mathiasbynens.be/notes/javascript-identifiers-es6) on all the nitty gritty details.
+**Note:** Mathias Bynens has a great post (https://mathiasbynens.be/notes/javascript-identifiers-es6) on all the nitty-gritty details.
 
-The reasons for using such unusual characters in identifier names are rather rare and academic. You typically won't be best served by writing code which relies on these esoteric capabilities.
+The reasons for using such unusual characters in identifier names are rather rare and academic. You typically won't be best served by writing code that relies on these esoteric capabilities.
 
 ## Symbols
 
-For the first time in quite awhile, a new primitive type has been added to JavaScript, in ES6: the `symbol`. Unlike the other primitive types, however, symbols don't have a literal form.
+With ES6, for the first time in quite a while, a new primitive type has been added to JavaScript: the `symbol`. Unlike the other primitive types, however, symbols don't have a literal form.
 
 Here's how you create a symbol:
 
@@ -2577,7 +2600,7 @@ The description, if provided, is solely used for the stringification representat
 sym.toString();		// "Symbol(some optional description)"
 ```
 
-Similar to how primitive string values are not instances of `String`, symbols are also not instances of `Symbol`. If for some reason you want to construct a boxed wrapper object form of a symbol value, you can do the following:
+Similar to how primitive string values are not instances of `String`, symbols are also not instances of `Symbol`. If, for some reason, you want to construct a boxed wrapper object form of a symbol value, you can do the following:
 
 ```js
 sym instanceof Symbol;		// false
@@ -2594,7 +2617,7 @@ The internal value of a symbol itself -- referred to as its `name` -- is hidden 
 
 But if the value is hidden and unobtainable, what's the point of having a symbol at all?
 
-The main point of a symbol is to create a string-like value that can't collide with any other value. So for example, consider using a symbol as a constant representing an event name:
+The main point of a symbol is to create a string-like value that can't collide with any other value. So, for example, consider using a symbol as a constant representing an event name:
 
 ```js
 const EVT_LOGIN = Symbol( "event.login" );
@@ -2613,6 +2636,8 @@ The benefit here is that `EVT_LOGIN` holds a value that cannot be duplicated (ac
 **Note:** Under the covers, the `evthub` utility assumed in the previous snippet would almost certainly be using the symbol value from the `EVT_LOGIN` argument directly as the property/key in some internal object (hash) that tracks event handlers. If `evthub` instead needed to use the symbol value as a real string, it would need to explicitly coerce with `String(..)` or `toString()`, as implicit string coercion of symbols is not allowed.
 
 You may use a symbol directly as a property name/key in an object, such as a special property that you want to treat as hidden or meta in usage. It's important to know that it is not *actually* a hidden or untouchable property, but more a property that you just intend to treat as such.
+
+//TODO Kyle: "It's important to know that although you intend to treat it as such, it is not *actually* a hidden or untouchable property."?
 
 Consider this module that implements the *singleton* pattern behavior -- that is, it only allows itself to be created once:
 
@@ -2641,7 +2666,7 @@ It could alternatively have been a plain old property like `__instance`, and the
 
 ### Symbol Registry
 
-One mild downside to using symbols as in the last few examples is that the `EVT_LOGIN` and `INSTANCE` variables had to be stored in an outer scope (perhaps even the global scope), or otherwise somehow stored in a publicly available location, so that all parts of the code which need to use the symbols can access them.
+One mild downside to using symbols as in the last few examples is that the `EVT_LOGIN` and `INSTANCE` variables had to be stored in an outer scope (perhaps even the global scope), or otherwise somehow stored in a publicly available location, so that all parts of the code that need to use the symbols can access them.
 
 To aid in organizing code with access to these symbols, you can create symbol values with the *global symbol registry*. For example:
 
@@ -2673,7 +2698,7 @@ Ironically, symbols are basically intended to replace the use of *magic strings*
 
 To avoid accidental collisions, you'll probably want to make your symbol descriptions quite unique. One easy way of doing that is to include prefix/context/namespacing information in them.
 
-For example, consider a utility like:
+For example, consider a utility such as the following:
 
 ```js
 function extractValues(str) {
@@ -2703,7 +2728,7 @@ extractValues( "..some string.." );
 
 Aside from the assistance the symbol registry provides in globally storing these values, nothing we're seeing here couldn't have been done by just actually using the magic string `"extractValues.parse"` as the key, rather than the symbol. The improvements exist at the metaprogramming level more than the functional level.
 
-You may have occassion to use a symbol value that has been stored in the registry to look up what description text (key) it's stored under. For example, you may need to signal to another part of your application how to locate a symbol in the registry because you cannot pass the symbol value itself.
+You may have occasion to use a symbol value that has been stored in the registry to look up what description text (key) it's stored under. For example, you may need to signal to another part of your application how to locate a symbol in the registry because you cannot pass the symbol value itself.
 
 You can retrieve a registered symbol's description text (key) using `Symbol.keyFor(..)`:
 
@@ -2723,6 +2748,8 @@ s2 === s;						// true
 
 If a symbol is used as a property/key of an object, it's stored in a special way that the property will not show up in a normal enumeration of the object's properties:
 
+//TODO Kyle: "a special way so that" (insert "so")?
+
 ```js
 var o = {
 	foo: 42,
@@ -2741,7 +2768,9 @@ Object.getOwnPropertySymbols( o );	// [ Symbol(bar) ]
 
 So it's clear that a property symbol is not actually hidden or inaccessible, as you can always see it in the `Object.getOwnPropertySymbols(..)` enumeration.
 
-#### Built-in Symbols
+//TODO Kyle: "This makes it clear that a property symbol ..."?
+
+#### Built-In Symbols
 
 ES6 comes with a number of predefined built-in symbols that expose various meta behaviors on JavaScript object values. However, these symbols are *not* registered in the global symbol registry, as one might expect.
 
@@ -2755,7 +2784,7 @@ a[Symbol.iterator];			// native function
 
 The specification uses the `@@` prefix notation to refer to the built-in symbols, the most common ones being: `@@iterator`, `@@toStringTag`, `@@toPrimitive`. Several others are defined as well, though they probably won't be used as often.
 
-**Note:** See "Well Known Symbols" in Chapter 7 for detailed information about how these built-in symbols are used for meta programming purposes.
+**Note:** See "Well-Known Symbols" in Chapter 7 for detailed information about how these built-in symbols are used for meta programming purposes.
 
 ## Review
 
@@ -2763,6 +2792,6 @@ ES6 adds a heap of new syntax forms to JavaScript, so there's plenty to learn!
 
 Most of these are designed to ease the pain points of common programming idioms, such as setting default values to function parameters and gathering the "rest" of the parameters into an array. Destructuring is a powerful tool for more concisely expressing assignments of values from arrays and nested objects.
 
-While features like `=>` arrow functions appear to also be all about shorter and nicer looking syntax, they actually have very specific behaviors that you should intentionally use only in appropriate situations.
+While features like `=>` arrow functions appear to also be all about shorter and nicer-looking syntax, they actually have very specific behaviors that you should intentionally use only in appropriate situations.
 
 Expanded Unicode support, new tricks for regular expressions, and even a new primitive `symbol` type round out the syntactic evolution of ES6.
